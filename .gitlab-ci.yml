@@ -1,19 +1,30 @@
 ---
 stages:
-  - build
+  - validation
   - docker
   - acceptance
 
-remove_me:
-  stage: build
+test:
+  stage: validation
+  image: php:8.0
+  cache:
+    paths:
+      - vendor/
+  before_script:
+    # Install composer dependencies
+    # Install git (the php image doesn't have it) which is required by composer
+    - apt-get update -yqq
+    - apt-get install git -yqq
+
+    # Install composer
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+    # Install all project dependencies
+    - composer install
   script:
-  - >
-     echo If you can see this you know that gitlab-ci is running.  You should
-     uncomment the sections that enable building the docker image and running
-     the acceptance tests.
-     Change any file as necessary to make tests pass in your language of
-     choice.  But be mindful that we will only accept challenges that are
-     passing acceptance.  Good luck!
+    - echo "Checking code standars and running Tests"
+    - make cs
+    - make test
 
 ## Uncomment the following sections to enable docker, image building and
 ## acceptance

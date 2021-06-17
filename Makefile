@@ -30,3 +30,16 @@ debug:	### Debug Makefile itself
 .PHONY: dockerize
 dockerize: build
 	@docker build -t car-pooling-challenge:latest .
+
+.PHONY: cs
+cs: ### Validate all code standards
+	./vendor/bin/php-cs-fixer fix src --diff --rules=@PSR12 --dry-run
+	./vendor/bin/php-cs-fixer fix tests --diff --rules=@PSR12 --dry-run
+
+.PHONY: test
+test: unit ### run tests
+
+.PHONY: unit
+unit: ### run unit testing
+	./vendor/bin/phpunit \
+		--exclude-group='disabled' --testdox

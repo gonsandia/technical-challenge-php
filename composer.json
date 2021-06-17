@@ -12,6 +12,11 @@
             "Gonsadia\\CarPoolingChallenge\\": "src/CarPoolingChallenge/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Gonsandia\\Tests\\CarPoolingChallenge\\": "tests/CarPoolingChallenge"
+        }
+    },
     "authors": [
         {
             "name": "Gonzalo Santos",
