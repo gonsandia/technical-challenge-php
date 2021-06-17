@@ -86,6 +86,9 @@ WORKDIR /var/www
 # Copy proyect files
 COPY / ./
 
+# Install dependencies
+RUN composer update --prefer-dist --optimize-autoloader
+
 # Set owner and permission for cache and logs folders
 RUN chown -R nginx:nginx /var/www
 

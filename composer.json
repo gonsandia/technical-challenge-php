@@ -1,0 +1,22 @@
+{
+    "name": "gonsadia/car-pooling-challenge",
+    "description": "Cabify technical challenge on php",
+    "type": "project",
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "friendsofphp/php-cs-fixer": "^3.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Gonsadia\\CarPoolingChallenge\\": "src/CarPoolingChallenge/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gonzalo Santos",
+            "email": "gonzalosantos89@gmail.com"
+        }
+    ],
+    "require": {}
+}
