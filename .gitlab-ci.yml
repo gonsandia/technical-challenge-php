@@ -4,12 +4,6 @@ stages:
   - docker
   - acceptance
 
-# Speed up builds
-cache:
-  key: $CI_COMMIT_REF_SLUG
-  paths:
-    - vendor
-
 test:
   stage: validation
   image: composer:2.1
