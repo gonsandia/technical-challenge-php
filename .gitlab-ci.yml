@@ -4,21 +4,15 @@ stages:
   - docker
   - acceptance
 
+# Speed up builds
+cache:
+  paths:
+    - vendor
+
 test:
   stage: validation
-  image: php:8.0
-  cache:
-    paths:
-      - vendor/
+  image: composer:2.1
   before_script:
-    # Install composer dependencies
-    # Install git (the php image doesn't have it) which is required by composer
-    - apt-get update -yqq
-    - apt-get install git -yqq
-
-    # Install composer
-    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
     # Install all project dependencies
     - composer install
   script:
