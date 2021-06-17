@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 
 class JourneyTest extends TestCase
 {
-
     public function testItShouldAssignCarId(): void
     {
         $car = $this->getCarWithJourneys();

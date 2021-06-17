@@ -36,6 +36,11 @@ cs: ### Validate all code standards
 	./vendor/bin/php-cs-fixer fix src --diff --rules=@PSR12 --dry-run
 	./vendor/bin/php-cs-fixer fix tests --diff --rules=@PSR12 --dry-run
 
+.PHONY: cs-fix
+cs-fix: ### fix psr-12 code standards
+	./vendor/bin/php-cs-fixer fix src --diff --rules=@PSR12
+	./vendor/bin/php-cs-fixer fix tests --diff --rules=@PSR12
+
 .PHONY: test
 test: unit ### run tests
 

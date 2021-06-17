@@ -64,7 +64,6 @@ class Car
 
     public function performJourney(Journey $journey): void
     {
-
         $this->checkOrThrowPerformAction($this->totalSeats, $this->journeys, $journey);
 
         $journey->assignCarId($this->carId);
