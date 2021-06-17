@@ -38,7 +38,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         php8.0-xml \
         php8.0-curl \
         php8.0-mysql \
-        php8.0-xdebug \
     && apt-get autoremove -y && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
