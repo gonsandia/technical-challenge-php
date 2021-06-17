@@ -6,6 +6,7 @@ stages:
 
 # Speed up builds
 cache:
+  key: $CI_COMMIT_REF_SLUG
   paths:
     - vendor
 
@@ -54,7 +55,7 @@ test:
 # acceptance:
 #   image: cabify/challenge:latest
 #   stage: acceptance
-#   only: 
+#   only:
 #     - master
 #   dependencies: []
 #   services:
