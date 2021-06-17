@@ -9,7 +9,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Gonsadia\\CarPoolingChallenge\\": "src/CarPoolingChallenge/"
+            "Gonsandia\\CarPoolingChallenge\\": "src/CarPoolingChallenge/"
         }
     },
     "autoload-dev": {
