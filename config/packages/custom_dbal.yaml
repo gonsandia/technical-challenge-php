@@ -1,0 +1,5 @@
+doctrine:
+  dbal:
+    types:
+      CarId: Gonsandia\CarPoolingChallenge\Infrastructure\Persistence\Doctrine\Types\DoctrineCarId
+      JourneyId: Gonsandia\CarPoolingChallenge\Infrastructure\Persistence\Doctrine\Types\DoctrineJourneyId
