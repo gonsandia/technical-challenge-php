@@ -3,8 +3,7 @@
     "description": "Cabify technical challenge on php",
     "type": "project",
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
-        ,
+        "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.5",
         "friendsofphp/php-cs-fixer": "^3.0"
     },
@@ -26,6 +25,9 @@
         }
     ],
     "require": {
-        "beberlei/assert": "^3.3"
+        "beberlei/assert": "^3.3",
+        "symfony/framework-bundle": "^5.3",
+        "symfony/dotenv": "5.3.*",
+        "symfony/yaml": "5.3.*"
     }
 }
