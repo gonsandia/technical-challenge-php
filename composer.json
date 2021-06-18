@@ -3,6 +3,8 @@
     "description": "Cabify technical challenge on php",
     "type": "project",
     "require-dev": {
+        "roave/security-advisories": "dev-latest"
+        ,
         "phpunit/phpunit": "^9.5",
         "friendsofphp/php-cs-fixer": "^3.0"
     },
@@ -23,5 +25,7 @@
             "email": "gonzalosantos89@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "beberlei/assert": "^3.3"
+    }
 }
