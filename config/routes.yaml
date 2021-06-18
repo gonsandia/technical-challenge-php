@@ -1,3 +1,9 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+status:
+    path: /status
+    methods: GET
+    controller: Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web\CheckServiceStatusController::index
+
+index:
+    path: /cars
+    methods: PUT
+    controller: Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web\LoadAvailableCarsController::index
