@@ -2,7 +2,6 @@
 
 namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
-use Assert\InvalidArgumentException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CantDropOffException;
 
 class Car

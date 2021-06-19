@@ -10,7 +10,7 @@ interface CarRepository
 
     public function findCarWithEnoughEmptySeatsForGroup(TotalPeople $totalPeople): ?Car;
 
-    public function ofJourneyId(JourneyId $param): ?Car;
+    public function ofJourneyId(JourneyId $journeyId): ?Car;
 
     public function loadCars(array $cars);
 }
