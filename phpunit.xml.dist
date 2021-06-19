@@ -8,8 +8,11 @@
          failOnWarning="true">
 
     <testsuites>
-        <testsuite name="Test Suite">
+        <testsuite name="Test Unit Suite">
             <directory>./tests/CarPoolingChallenge/Unit</directory>
+        </testsuite>
+        <testsuite name="Test Functional Suite">
+            <directory>./tests/CarPoolingChallenge/Functional</directory>
         </testsuite>
     </testsuites>
 
@@ -25,6 +28,7 @@
 
     <php>
         <const name="PHPUNIT_TESTSUITE" value="true"/>
+        <env name="KERNEL_CLASS" value="Gonsandia\CarPoolingChallenge\Infrastructure\Framework\Kernel"/>
     </php>
 
 </phpunit>

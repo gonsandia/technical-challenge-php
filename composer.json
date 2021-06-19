@@ -5,7 +5,8 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.5",
-        "friendsofphp/php-cs-fixer": "^3.0"
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "symfony/browser-kit": "^5.3"
     },
     "license": "MIT",
     "autoload": {
@@ -15,7 +16,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Gonsandia\\Tests\\CarPoolingChallenge\\": "tests/CarPoolingChallenge"
+            "Gonsandia\\Tests\\CarPoolingChallenge\\": "tests/CarPoolingChallenge/"
         }
     },
     "authors": [
