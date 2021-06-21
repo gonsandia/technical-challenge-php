@@ -131,7 +131,7 @@ class DropOffTest extends WebTestCase
         $journeyRepository->clearTable();
 
         // add car
-        $car1 = Car::from(new CarId(1),new TotalSeats(4));
+        $car1 = Car::from(new CarId(1), new TotalSeats(4));
 
         // add journey
         $journey1 = Journey::from(new JourneyId(1), new TotalPeople(4));
@@ -158,7 +158,7 @@ class DropOffTest extends WebTestCase
         $journeyRepository->clearTable();
 
         // add car
-        $car1 = Car::from(new CarId(1),new TotalSeats(6));
+        $car1 = Car::from(new CarId(1), new TotalSeats(6));
         $journey1 = Journey::from(new JourneyId(1), new TotalPeople(4));
 
         // persist

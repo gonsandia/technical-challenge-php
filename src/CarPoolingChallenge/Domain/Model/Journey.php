@@ -58,7 +58,8 @@ class Journey
     }
 
 
-    public function __toString() {
+    public function __toString()
+    {
         return serialize($this);
     }
 }

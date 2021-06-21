@@ -109,7 +109,7 @@ class PerformJourneyTest extends WebTestCase
         $journeyRepository->clearTable();
 
         // add car
-        $car1 = Car::from(new CarId(1),new TotalSeats(6));
+        $car1 = Car::from(new CarId(1), new TotalSeats(6));
         $journey1 = Journey::from(new JourneyId(1), new TotalPeople(6));
 
         // persist
@@ -134,7 +134,7 @@ class PerformJourneyTest extends WebTestCase
         $journeyRepository->clearTable();
 
         // add car
-        $car1 = Car::from(new CarId(1),new TotalSeats(6));
+        $car1 = Car::from(new CarId(1), new TotalSeats(6));
         $journey1 = Journey::from(new JourneyId(1), new TotalPeople(1));
 
         // persist

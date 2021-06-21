@@ -10,7 +10,6 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 
 final class DoctrineJourneyId extends Type
 {
-
     private const MY_TYPE = 'JourneyId';
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
