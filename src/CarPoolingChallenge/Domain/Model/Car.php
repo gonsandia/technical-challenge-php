@@ -18,6 +18,7 @@ class Car
     {
         $this->carId = $carId;
         $this->totalSeats = $totalSeats;
+        $this->journeys = [];
 
 
         foreach ($journeys as $journey) {
