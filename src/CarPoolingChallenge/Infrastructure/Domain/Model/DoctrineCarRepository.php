@@ -87,7 +87,7 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         $qb->select();
 
         $qb
-            ->join(Journey::class, 'j', 'j.carId = c.carId')
+            ->leftJoin(Journey::class, 'j', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->eq('j.carId', 'c.carId'))
             ->andWhere($qb->expr()->eq('j.journeyId', ':journeyId'));
 
         $qb

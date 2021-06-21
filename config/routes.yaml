@@ -3,7 +3,23 @@ status:
     methods: GET
     controller: Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web\CheckServiceStatusController::index
 
-index:
+cars:
     path: /cars
     methods: PUT
     controller: Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web\LoadAvailableCarsController::index
+
+dropoff:
+    path: /dropoff
+    methods: POST
+    controller: Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web\DropOffController::index
+
+
+locate:
+    path: /locate
+    methods: POST
+    controller: Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web\LocateCarController::index
+
+journey:
+    path: /journey
+    methods: POST
+    controller: Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web\PerformJourneyController::index

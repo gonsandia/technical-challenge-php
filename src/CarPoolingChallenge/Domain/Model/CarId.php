@@ -7,7 +7,7 @@ use Assert\Assert;
 class CarId
 {
     public const FIRST_ID = 1;
-    private int $id;
+    private ?int $id;
 
     /**
      * TotalSeats constructor.

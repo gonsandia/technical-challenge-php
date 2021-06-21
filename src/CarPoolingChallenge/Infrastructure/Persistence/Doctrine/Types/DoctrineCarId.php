@@ -10,22 +10,18 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 
 final class DoctrineCarId extends Type
 {
-    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+    private const MY_TYPE = 'CarId';
+
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        $className = $this->getNamespace() . '\\' . $this->getName();
-        return new $className($value);
+        $className = CarId::class;
+        return new $className((int)$value);
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return is_null($value) ? null : $value->getId();
+        return is_null($value) ? null : (int)$value->getId();
     }
-
-    private const MY_TYPE = 'CarId';
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
@@ -35,10 +31,5 @@ final class DoctrineCarId extends Type
     public function getName(): string
     {
         return self::MY_TYPE;
-    }
-
-    protected function getNamespace(): string
-    {
-        return CarId::class;
     }
 }
