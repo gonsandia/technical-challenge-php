@@ -20,7 +20,7 @@ final class DoctrineJourneyId extends Type
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return $value->value();
+        return $value ?? $value->getId();
     }
 
     private const MY_TYPE = 'JourneyId';

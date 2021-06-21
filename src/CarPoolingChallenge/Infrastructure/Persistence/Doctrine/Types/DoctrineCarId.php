@@ -17,10 +17,12 @@ final class DoctrineCarId extends Type
         return new $className($value);
     }
 
-    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return $value->value();
+        return is_null($value) ? null : $value->getId();
     }
 
     private const MY_TYPE = 'CarId';

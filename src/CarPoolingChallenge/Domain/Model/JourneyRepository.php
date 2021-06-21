@@ -11,4 +11,6 @@ interface JourneyRepository
     public function ofId(JourneyId $journeyId): Journey;
 
     public function findPendingJourneyForCar(Car $car): ?Journey;
+
+    public function clearTable();
 }

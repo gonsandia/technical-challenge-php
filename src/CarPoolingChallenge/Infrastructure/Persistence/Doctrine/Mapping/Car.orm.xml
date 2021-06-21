@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<doctrine-mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
-                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity repository-class="Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository"
+    <entity repository-class="Gonsandia\CarPoolingChallenge\Infrastructure\Domain\Model\DoctrineCarRepository"
             name="Gonsandia\CarPoolingChallenge\Domain\Model\Car"
             table="car">
 
@@ -13,7 +14,11 @@
 
         <embedded name="availableSeats" class="Gonsandia\CarPoolingChallenge\Domain\Model\AvailableSeats" use-column-prefix="false" />
 
-        <one-to-many field="journeys" target-entity="Journey" mapped-by="carId" />
+        <one-to-many field="journeys" target-entity="Journey" mapped-by="carId">
+            <cascade>
+                <cascade-persist/>
+            </cascade>
+        </one-to-many>
 
         <unique-constraints>
             <unique-constraint columns="car_id" name="car_id_idx"/>

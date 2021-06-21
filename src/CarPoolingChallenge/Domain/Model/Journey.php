@@ -56,4 +56,9 @@ class Journey
     {
         $this->carId = $carId;
     }
+
+
+    public function __toString() {
+        return serialize($this);
+    }
 }

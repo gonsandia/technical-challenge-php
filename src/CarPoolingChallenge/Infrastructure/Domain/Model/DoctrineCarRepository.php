@@ -45,7 +45,7 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         $this->_em->flush();
     }
 
-    private function clearTable(): mixed
+    public function clearTable(): mixed
     {
         $qb = $this->createQueryBuilder('c');
 

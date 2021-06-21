@@ -13,4 +13,6 @@ interface CarRepository
     public function ofJourneyId(JourneyId $journeyId): ?Car;
 
     public function loadCars(array $cars);
+
+    public function clearTable();
 }

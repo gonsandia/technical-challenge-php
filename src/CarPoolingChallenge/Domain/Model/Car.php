@@ -2,6 +2,8 @@
 
 namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CantDropOffException;
 
 class Car
@@ -12,13 +14,13 @@ class Car
 
     private AvailableSeats $availableSeats;
 
-    private array $journeys;
+    private Collection $journeys;
 
     public function __construct(CarId $carId, TotalSeats $totalSeats, array $journeys = [])
     {
         $this->carId = $carId;
         $this->totalSeats = $totalSeats;
-        $this->journeys = [];
+        $this->journeys = new ArrayCollection();
 
 
         foreach ($journeys as $journey) {
@@ -51,7 +53,7 @@ class Car
      */
     public function getJourneys(): array
     {
-        return $this->journeys;
+        return $this->journeys->toArray();
     }
 
     /**
@@ -64,23 +66,23 @@ class Car
 
     public function performJourney(Journey $journey): void
     {
-        $this->checkOrThrowPerformAction($this->totalSeats, $this->journeys, $journey);
+        $this->checkOrThrowPerformAction($this->totalSeats, $this->getJourneys(), $journey);
 
         $journey->assignCarId($this->carId);
         $this->addJourney($journey);
-        $this->setAvailableSeats($this->totalSeats, $this->journeys);
+        $this->setAvailableSeats($this->totalSeats, $this->getJourneys());
     }
 
     public function dropOff(Journey $journey): void
     {
-        $this->checkOrThrowDropOffAction($this->journeys, $journey);
+        $this->checkOrThrowDropOffAction($this->getJourneys(), $journey);
 
         $journey->assignCarId(null);
         $this->removeJourney($journey);
-        $this->setAvailableSeats($this->totalSeats, $this->journeys);
+        $this->setAvailableSeats($this->totalSeats, $this->getJourneys());
     }
 
-    private function setAvailableSeats($totalSeats, $journeys): void
+    private function setAvailableSeats(TotalSeats $totalSeats, array $journeys): void
     {
         $this->availableSeats = self::calculateAvailableSeats($totalSeats, $journeys);
     }

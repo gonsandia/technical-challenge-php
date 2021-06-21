@@ -60,4 +60,13 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function clearTable(): mixed
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        $qb->delete();
+
+        return $qb->getQuery()->execute();
+    }
 }
