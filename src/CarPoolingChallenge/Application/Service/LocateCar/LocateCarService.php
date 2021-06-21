@@ -18,7 +18,6 @@ class LocateCarService implements ApplicationService
         $this->carRepository = $carRepository;
     }
 
-
     public function execute($request = null): ?Car
     {
         $journeyId = $request->getJourneyId();
