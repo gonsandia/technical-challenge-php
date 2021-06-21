@@ -15,29 +15,22 @@ class LoadAvailableCarsController extends AbstractController
 
     private LoadAvailableCarsService $loadAvailableCars;
 
-    /**
-     * LoadAvailableCars constructor.
-     */
     public function __construct(LoadAvailableCarsService $loadAvailableCars)
     {
         $this->loadAvailableCars = $loadAvailableCars;
     }
 
-
     public function index(Request $request): Response
     {
         $this->assertContentType($request, self::FORM_CONTENT_TYPE);
 
-        $request = $this->serializeRequest($request);
+        $action = $this->serializeRequest($request);
 
-        $this->loadAvailableCars->execute($request);
+        $this->loadAvailableCars->execute($action);
 
         return new Response(null, Response::HTTP_OK);
     }
 
-    /**
-     * @throws InvalidContentTypeException
-     */
     private function assertContentType(Request $request, string $contentType): void
     {
         if ($request->getContentType() !== $contentType) {
@@ -47,6 +40,8 @@ class LoadAvailableCarsController extends AbstractController
 
     private function serializeRequest(Request $request): LoadAvailableCarsRequest
     {
-        return new LoadAvailableCarsRequest();
+        return new LoadAvailableCarsRequest(
+            $request->get('cars')
+        );
     }
 }

@@ -12,7 +12,7 @@ class LoadAvailableCarsTest extends WebTestCase
      */
     public function given_array_cars_when_loaded_success_then_ok()
     {
-        $client = LoadAvailableCarsTest::createClient();
+        $client = self::createClient();
 
         $data = [
             [

@@ -7,7 +7,7 @@ use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class LocateJourneyTest extends WebTestCase
+class LocateCarTest extends WebTestCase
 {
     /**
      * @var EntityManager

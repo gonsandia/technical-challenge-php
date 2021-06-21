@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\Framework;
 
+use Gonsandia\CarPoolingChallenge\Application\Exception\ContentTypeException;
+use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -26,9 +27,9 @@ class ExceptionListener
 //            $exception instanceof InvalidArgumentException, $exception instanceof SerializationException, $exception instanceof AssertMessageException, $exception instanceof AssertPayloadException => Response::HTTP_BAD_REQUEST,
 //            $exception instanceof AuthenticationException => Response::HTTP_UNAUTHORIZED,
 //            $exception instanceof AccessDeniedException => Response::HTTP_FORBIDDEN,
-//            $exception instanceof NotFoundHttpException => Response::HTTP_NOT_FOUND,
-//            $exception instanceof DomainLogicException => Response::HTTP_CONFLICT,
-//            $exception instanceof ContentTypeException => Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
+            $exception instanceof CarNotExistsException => Response::HTTP_NOT_FOUND,
+//            $exception instanceof DomainLogicException => Response::HTTP_NO_CONTENT,
+            $exception instanceof ContentTypeException => Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
             $exception instanceof HttpException => $exception->getStatusCode(),
             default => Response::HTTP_INTERNAL_SERVER_ERROR,
         };
@@ -45,6 +46,4 @@ class ExceptionListener
         // sends the modified response object to the event
         $event->setResponse($response);
     }
-
-
 }
