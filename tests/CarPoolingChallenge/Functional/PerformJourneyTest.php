@@ -4,6 +4,14 @@ namespace Gonsandia\Tests\CarPoolingChallenge\Functional;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
+use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
+use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
+use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
+use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,7 +37,7 @@ class PerformJourneyTest extends WebTestCase
      */
     public function given_perform_journey_when_wait_for_car_then_ok()
     {
-        $this->setCarsWithoutEmptySeatsState();
+        $this->setDbStateCarWithEmptySeats();
 
         self::ensureKernelShutdown();
         $client = PerformJourneyTest::createClient();
@@ -46,7 +54,7 @@ class PerformJourneyTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            Utils::jsonEncode($data)
+            json_encode($data, JSON_THROW_ON_ERROR)
         );
 
         $code = $client->getResponse()->getStatusCode();
@@ -59,7 +67,7 @@ class PerformJourneyTest extends WebTestCase
      */
     public function given_perform_journey_when_found_car_then_accepted()
     {
-        $this->setCarsWithEmptySeatsState();
+        $this->setDbStateCarWithoutEmptySeats();
 
         self::ensureKernelShutdown();
         $client = static::createClient();
@@ -76,7 +84,7 @@ class PerformJourneyTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            Utils::jsonEncode($data)
+            json_encode($data, JSON_THROW_ON_ERROR)
         );
 
         $code = $client->getResponse()->getStatusCode();
@@ -85,47 +93,53 @@ class PerformJourneyTest extends WebTestCase
     }
 
     /**
-     * Create DB_STATE WITH empty journeys and available cars
+     * Create DB_STATE WITH a journey without car associated
      *
      * @throws ORMException
      */
-    private function setCarsWithEmptySeatsState()
+    private function setDbStateCarWithoutEmptySeats(): void
     {
-//        /** @var CarRepository $carRepository */
-//        $carRepository = $this->entityManager->getRepository(Car::class);
-//        /** @var JourneyRepository $journeyRepository */
-//        $journeyRepository = $this->entityManager->getRepository(Journey::class);
-//
-//        // clear tables
-//        $carRepository->clearTable();
-//        $journeyRepository->clearTable();
-//
-//        // add cars with available seats
-//        $car1 = Car::fromTestingValues(1, 3, 3);
-//        $car2 = Car::fromTestingValues(2, 6, 6);
-//        $carRepository->saveCars([$car1, $car2]);
+        /** @var CarRepository $carRepository */
+        $carRepository = $this->entityManager->getRepository(Car::class);
+        /** @var JourneyRepository $journeyRepository */
+        $journeyRepository = $this->entityManager->getRepository(Journey::class);
+
+        // clear tables
+        $carRepository->clearTable();
+        $journeyRepository->clearTable();
+
+        // add car
+        $car1 = Car::from(new CarId(1),new TotalSeats(6));
+        $journey1 = Journey::from(new JourneyId(1), new TotalPeople(6));
+
+        // persist
+        $carRepository->save($car1);
+        $journeyRepository->save($journey1);
     }
 
     /**
-     * Create DB_STATE WITH empty journeys and without available cars
+     * Create DB_STATE WITH a journey without car associated
      *
      * @throws ORMException
      */
-    private function setCarsWithoutEmptySeatsState()
+    private function setDbStateCarWithEmptySeats(): void
     {
-//        /** @var CarRepository $carRepository */
-//        $carRepository = $this->entityManager->getRepository(Car::class);
-//        /** @var JourneyRepository $journeyRepository */
-//        $journeyRepository = $this->entityManager->getRepository(Journey::class);
-//
-//        // clear tables
-//        $carRepository->clearTable();
-//        $journeyRepository->clearTable();
-//
-//        // add cars without available seats
-//        $car1 = Car::fromTestingValues(1, 0, 3);
-//        $car2 = Car::fromTestingValues(2, 0, 3);
-//        $carRepository->saveCars([$car1, $car2]);
+        /** @var CarRepository $carRepository */
+        $carRepository = $this->entityManager->getRepository(Car::class);
+        /** @var JourneyRepository $journeyRepository */
+        $journeyRepository = $this->entityManager->getRepository(Journey::class);
+
+        // clear tables
+        $carRepository->clearTable();
+        $journeyRepository->clearTable();
+
+        // add car
+        $car1 = Car::from(new CarId(1),new TotalSeats(6));
+        $journey1 = Journey::from(new JourneyId(1), new TotalPeople(1));
+
+        // persist
+        $carRepository->save($car1);
+        $journeyRepository->save($journey1);
     }
 
     protected function tearDown(): void

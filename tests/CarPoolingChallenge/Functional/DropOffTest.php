@@ -4,6 +4,14 @@ namespace Gonsandia\Tests\CarPoolingChallenge\Functional;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
+use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
+use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
+use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
+use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,7 +37,7 @@ class DropOffTest extends WebTestCase
      */
     public function given_journey_id_when_wait_for_car_then_ok(): void
     {
-        $this->setJourneyWithoutCarState();
+        $this->setDbStatePendingJourney();
 
         self::ensureKernelShutdown();
         $client = self::createClient();
@@ -57,7 +65,7 @@ class DropOffTest extends WebTestCase
      */
     public function given_journey_id_when_had_assigned_car_then_ok(): void
     {
-        $this->setJourneyWithCarState();
+        $this->setDbStateCarWithJourneyAssigned();
 
         self::ensureKernelShutdown();
         $client = self::createClient();
@@ -85,8 +93,6 @@ class DropOffTest extends WebTestCase
      */
     public function given_journey_id_when_group_not_found_then_not_found(): void
     {
-        $this->setCleanState();
-
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -113,24 +119,26 @@ class DropOffTest extends WebTestCase
      *
      * @throws ORMException
      */
-    private function setJourneyWithCarState(): void
+    private function setDbStateCarWithJourneyAssigned(): void
     {
-//        /** @var CarRepository $carRepository */
-//        $carRepository = $this->entityManager->getRepository(Car::class);
-//        /** @var JourneyRepository $journeyRepository */
-//        $journeyRepository = $this->entityManager->getRepository(Journey::class);
-//
-//        // clear tables
-//        $carRepository->clearTable();
-//        $journeyRepository->clearTable();
-//
-//        // add car
-//        $car1 = Car::fromTestingValues(1, 3, 3);
-//        $carRepository->saveCars([$car1]);
-//
-//        // add car
-//        $journey1 = Journey::fromTestingValues(1, 3, 1);
-//        $journeyRepository->saveJourney($journey1);
+        /** @var CarRepository $carRepository */
+        $carRepository = $this->entityManager->getRepository(Car::class);
+        /** @var JourneyRepository $journeyRepository */
+        $journeyRepository = $this->entityManager->getRepository(Journey::class);
+
+        // clear tables
+        $carRepository->clearTable();
+        $journeyRepository->clearTable();
+
+        // add car
+        $car1 = Car::from(new CarId(1),new TotalSeats(4));
+
+        // add journey
+        $journey1 = Journey::from(new JourneyId(1), new TotalPeople(4));
+        $car1->performJourney($journey1);
+
+        $carRepository->save($car1);
+        $journeyRepository->save($journey1);
     }
 
     /**
@@ -138,24 +146,24 @@ class DropOffTest extends WebTestCase
      *
      * @throws ORMException
      */
-    private function setJourneyWithoutCarState(): void
+    private function setDbStatePendingJourney(): void
     {
-//        /** @var CarRepository $carRepository */
-//        $carRepository = $this->entityManager->getRepository(Car::class);
-//        /** @var JourneyRepository $journeyRepository */
-//        $journeyRepository = $this->entityManager->getRepository(Journey::class);
-//
-//        // clear tables
-//        $carRepository->clearTable();
-//        $journeyRepository->clearTable();
-//
-//        // add car
-//        $car1 = Car::fromTestingValues(1, 3, 3);
-//        $carRepository->saveCars([$car1]);
-//
-//        // add car
-//        $journey1 = Journey::fromTestingValues(1, 3, null);
-//        $journeyRepository->saveJourney($journey1);
+        /** @var CarRepository $carRepository */
+        $carRepository = $this->entityManager->getRepository(Car::class);
+        /** @var JourneyRepository $journeyRepository */
+        $journeyRepository = $this->entityManager->getRepository(Journey::class);
+
+        // clear tables
+        $carRepository->clearTable();
+        $journeyRepository->clearTable();
+
+        // add car
+        $car1 = Car::from(new CarId(1),new TotalSeats(6));
+        $journey1 = Journey::from(new JourneyId(1), new TotalPeople(4));
+
+        // persist
+        $carRepository->save($car1);
+        $journeyRepository->save($journey1);
     }
 
     /**
@@ -164,14 +172,14 @@ class DropOffTest extends WebTestCase
      */
     private function setCleanState(): void
     {
-//        /** @var CarRepository $carRepository */
-//        $carRepository = $this->entityManager->getRepository(Car::class);
-//        /** @var JourneyRepository $journeyRepository */
-//        $journeyRepository = $this->entityManager->getRepository(Journey::class);
-//
-//        // clear tables
-//        $carRepository->clearTable();
-//        $journeyRepository->clearTable();
+        /** @var CarRepository $carRepository */
+        $carRepository = $this->entityManager->getRepository(Car::class);
+        /** @var JourneyRepository $journeyRepository */
+        $journeyRepository = $this->entityManager->getRepository(Journey::class);
+
+        // clear tables
+        $carRepository->clearTable();
+        $journeyRepository->clearTable();
     }
 
     protected function tearDown(): void

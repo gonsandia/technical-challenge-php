@@ -46,9 +46,11 @@ class PerformJourneyController extends AbstractController
 
     private function serializeRequest(Request $request): PerformJourneyRequest
     {
+        $body = json_decode($request->getContent(), true);
+
         return new PerformJourneyRequest(
-            new JourneyId($request->get('ID')),
-            new TotalPeople($request->get('people'))
+            new JourneyId($body['id']),
+            new TotalPeople($body['people'])
         );
     }
 }

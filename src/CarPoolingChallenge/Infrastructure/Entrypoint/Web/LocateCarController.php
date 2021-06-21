@@ -2,6 +2,9 @@
 
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
 
+use App\Common\Exception\QueryNotFoundException;
+use App\Message\Query\FindCarQuery;
+use App\Model\Domain\Car;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarService;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
@@ -33,7 +36,11 @@ class LocateCarController extends AbstractController
 
         $car = $this->locateCarService->execute($action);
 
-        return $this->json(['id' => $car->getCarId(), 'seats' => $car->getTotalSeats()], Response::HTTP_OK, ['content-type' => 'application/json']);
+        if (is_null($car)) {
+            return new Response(null, Response::HTTP_NO_CONTENT);
+        }
+
+        return $this->json(['id' => $car->getCarId()->getId(), 'seats' => $car->getTotalSeats()->getCount()], Response::HTTP_OK, ['content-type' => 'application/json']);
     }
 
     private function assertContentType(Request $request, string $contentType): void

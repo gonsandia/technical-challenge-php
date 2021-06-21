@@ -4,6 +4,7 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
 
 use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffService;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +41,7 @@ class DropOffController extends AbstractController
     private function serializeRequest(Request $request): DropOffRequest
     {
         return new DropOffRequest(
-            $request->get('ID')
+            new JourneyId($request->get('ID'))
         );
     }
 }
