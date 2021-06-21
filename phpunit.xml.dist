@@ -29,6 +29,7 @@
     <php>
         <const name="PHPUNIT_TESTSUITE" value="true"/>
         <env name="KERNEL_CLASS" value="Gonsandia\CarPoolingChallenge\Infrastructure\Framework\Kernel"/>
+        <env name="DATABASE_URL" value="sqlite:///%kernel.project_dir%/var/test.db" />
     </php>
 
 </phpunit>
