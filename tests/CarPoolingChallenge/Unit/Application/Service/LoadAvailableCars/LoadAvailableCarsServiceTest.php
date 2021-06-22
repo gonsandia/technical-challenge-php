@@ -7,8 +7,11 @@ use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvai
 use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvailableCarsService;
 use Gonsandia\CarPoolingChallenge\Domain\Event\DomainEventPublisher;
 use Gonsandia\CarPoolingChallenge\Domain\Event\SpySubscriber;
+use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
+use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarsLoaded;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
 use PHPUnit\Framework\TestCase;
 
 class LoadAvailableCarsServiceTest extends TestCase
@@ -30,16 +33,26 @@ class LoadAvailableCarsServiceTest extends TestCase
 
         $request = new LoadAvailableCarsRequest(
             [
-                ['id' => 1,
-                    'seats' => 4],
-                ['id' => 2,
-                    'seats' => 5],
-                ['id' => 3,
-                    'seats' => 5],
-                ['id' => 4,
-                    'seats' => 6],
-                ['id' => 5,
-                    'seats' => 6]
+                Car::from(
+                    new CarId(1),
+                    new TotalSeats(4)
+                ),
+                Car::from(
+                    new CarId(2),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(3),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(4),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(5),
+                    new TotalSeats(6)
+                ),
             ]
         );
 
@@ -56,17 +69,28 @@ class LoadAvailableCarsServiceTest extends TestCase
     {
         $request = new LoadAvailableCarsRequest(
             [
-                ['id' => 1,
-                    'seats' => 4],
-                ['id' => 2,
-                    'seats' => 5],
-                ['id' => 3,
-                    'seats' => 5],
-                ['id' => 4,
-                    'seats' => 6],
-                ['id' => 5,
-                    'seats' => 6]
+                Car::from(
+                    new CarId(1),
+                    new TotalSeats(4)
+                ),
+                Car::from(
+                    new CarId(2),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(3),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(4),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(5),
+                    new TotalSeats(6)
+                ),
             ]
+
         );
 
         $service = new LoadAvailableCarsService($this->carRepository);
@@ -78,50 +102,68 @@ class LoadAvailableCarsServiceTest extends TestCase
 
     public function testShouldNotCreateAvailableCarListFromRequestInvalidNumberOfSeats(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $request = new LoadAvailableCarsRequest(
             [
-                ['id' => 1,
-                    'seats' => 0],
-                ['id' => 1,
-                    'seats' => 3],
-                ['id' => 2,
-                    'seats' => 5],
-                ['id' => 3,
-                    'seats' => 5],
-                ['id' => 4,
-                    'seats' => 7],
-                ['id' => 5,
-                    'seats' => 126]
+                Car::from(
+                    new CarId(1),
+                    new TotalSeats(0)
+                ),
+                Car::from(
+                    new CarId(2),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(3),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(4),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(5),
+                    new TotalSeats(126)
+                ),
             ]
         );
 
         $service = new LoadAvailableCarsService($this->carRepository);
-
-        $this->expectException(InvalidArgumentException::class);
 
         $service->execute($request);
     }
 
     public function testShouldNotCreateAvailableCarListFromRequestInvalidIds(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $request = new LoadAvailableCarsRequest(
             [
-                ['id' => 0,
-                    'seats' => 4],
-                ['id' => 2,
-                    'seats' => 5],
-                ['id' => 3,
-                    'seats' => 5],
-                ['id' => 4,
-                    'seats' => 6],
-                ['id' => -5,
-                    'seats' => 6]
+                Car::from(
+                    new CarId(0),
+                    new TotalSeats(4)
+                ),
+                Car::from(
+                    new CarId(2),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(3),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(4),
+                    new TotalSeats(5)
+                ),
+                Car::from(
+                    new CarId(-5),
+                    new TotalSeats(6)
+                ),
             ]
         );
 
         $service = new LoadAvailableCarsService($this->carRepository);
-
-        $this->expectException(InvalidArgumentException::class);
 
         $service->execute($request);
     }

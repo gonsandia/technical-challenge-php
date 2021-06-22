@@ -4,6 +4,9 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
 
 use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvailableCarsRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvailableCarsService;
+use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
+use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,8 +43,23 @@ class LoadAvailableCarsController extends AbstractController
 
     private function serializeRequest(Request $request): LoadAvailableCarsRequest
     {
+        $cars = $this->loadCarsFromArray($request->get('cars'));
+
         return new LoadAvailableCarsRequest(
-            $request->get('cars')
+            $cars
         );
+    }
+
+    private function loadCarsFromArray(array $cars): array
+    {
+        $loadedCars = [];
+        foreach ($cars as $car) {
+            $loadedCars[$car['id']] = Car::from(
+                new CarId($car['id']),
+                new TotalSeats($car['seats'])
+            );
+        }
+
+        return $loadedCars;
     }
 }
