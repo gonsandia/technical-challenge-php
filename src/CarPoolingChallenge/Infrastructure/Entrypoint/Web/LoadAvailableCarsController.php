@@ -70,10 +70,8 @@ class LoadAvailableCarsController extends AbstractController
     {
         try {
             return json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
         } catch (\Exception $exception) {
             throw new BodyDeserializationException();
         }
-
     }
 }
