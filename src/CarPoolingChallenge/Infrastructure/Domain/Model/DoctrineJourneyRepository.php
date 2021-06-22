@@ -32,7 +32,7 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
 
     public function ofId(JourneyId $journeyId): Journey
     {
-        $journey = $this->findOneBy(['journey' => $journeyId]);
+        $journey = $this->findOneBy(['journeyId' => $journeyId]);
 
         return $journey;
     }
@@ -69,4 +69,22 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
 
         return $qb->getQuery()->execute();
     }
+
+    public function ofCarId($carId): array
+    {
+        $qb = $this->createQueryBuilder('j');
+
+        $qb->select();
+
+        $qb
+            ->andWhere($qb->expr()->eq('j.carId', ':carId'));
+
+        $qb
+            ->setParameter('carId', $carId);
+
+        $journeys = $qb->getQuery()->getResult();
+
+        return $journeys;
+    }
+
 }

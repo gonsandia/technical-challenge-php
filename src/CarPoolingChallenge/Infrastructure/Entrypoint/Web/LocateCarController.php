@@ -53,7 +53,7 @@ class LocateCarController extends AbstractController
     private function serializeRequest(Request $request): LocateCarRequest
     {
         return new LocateCarRequest(
-            new JourneyId($request->get('ID'))
+            new JourneyId((int)$request->get('ID'))
         );
     }
 }

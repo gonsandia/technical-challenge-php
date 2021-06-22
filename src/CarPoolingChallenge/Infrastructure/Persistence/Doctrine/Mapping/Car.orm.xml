@@ -14,12 +14,6 @@
 
         <embedded name="availableSeats" class="Gonsandia\CarPoolingChallenge\Domain\Model\AvailableSeats" use-column-prefix="false" />
 
-        <one-to-many field="journeys" target-entity="Journey" mapped-by="carId">
-            <cascade>
-                <cascade-persist/>
-            </cascade>
-        </one-to-many>
-
         <unique-constraints>
             <unique-constraint columns="car_id" name="car_id_idx"/>
         </unique-constraints>

@@ -15,11 +15,12 @@ final class DoctrineJourneyId extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         $className = JourneyId::class;
-        return new $className($value);
+        return new $className((int)$value);
     }
+
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return $value ?? $value->getId();
+        return is_null($value) ? null : (int)$value->getId();
     }
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string

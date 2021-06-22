@@ -11,13 +11,17 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
 
 class DoctrineCarRepository extends ServiceEntityRepository implements CarRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private JourneyRepository $journeyRepository;
+
+    public function __construct(ManagerRegistry $registry, JourneyRepository $journeyRepository)
     {
         parent::__construct($registry, Car::class);
+        $this->journeyRepository = $journeyRepository;
     }
 
     /**
@@ -70,12 +74,18 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         $qb
             ->setMaxResults(1);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $car = $qb->getQuery()->getOneOrNullResult();
+
+        $this->fillCarWithJourneys($car);
+
+        return $car;
     }
 
     public function ofId(CarId $carId): Car
     {
         $car = $this->findOneBy(['carId' => $carId]);
+
+        $this->fillCarWithJourneys($car);
 
         return $car;
     }
@@ -96,6 +106,20 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         $qb
             ->setMaxResults(1);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $car = $qb->getQuery()->getOneOrNullResult();
+
+        $this->fillCarWithJourneys($car);
+
+        return $car;
+    }
+
+    private function fillCarWithJourneys(?Car $car): void
+    {
+        if (is_null($car)) {
+            return;
+        }
+
+        $journeys = $this->journeyRepository->ofCarId($car->getCarId());
+        $car->setJourneys($journeys);
     }
 }

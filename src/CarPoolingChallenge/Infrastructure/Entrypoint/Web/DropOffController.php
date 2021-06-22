@@ -41,7 +41,7 @@ class DropOffController extends AbstractController
     private function serializeRequest(Request $request): DropOffRequest
     {
         return new DropOffRequest(
-            new JourneyId($request->get('ID'))
+            new JourneyId((int)$request->get('ID'))
         );
     }
 }

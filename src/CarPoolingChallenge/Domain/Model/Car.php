@@ -2,8 +2,6 @@
 
 namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CantDropOffException;
 
 class Car
@@ -14,20 +12,13 @@ class Car
 
     private AvailableSeats $availableSeats;
 
-    private Collection $journeys;
+    private array $journeys = [];
 
     public function __construct(CarId $carId, TotalSeats $totalSeats, array $journeys = [])
     {
         $this->carId = $carId;
         $this->totalSeats = $totalSeats;
-        $this->journeys = new ArrayCollection();
-
-
-        foreach ($journeys as $journey) {
-            $this->addJourney($journey);
-        }
-
-        $this->setAvailableSeats($totalSeats, $journeys);
+        $this->setJourneys($journeys);
     }
 
     public static function from(CarId $carId, TotalSeats $totalSeats, array $journeys = [])
@@ -53,7 +44,7 @@ class Car
      */
     public function getJourneys(): array
     {
-        return $this->journeys->toArray();
+        return $this->journeys;
     }
 
     /**
@@ -84,12 +75,13 @@ class Car
 
     private function setAvailableSeats(TotalSeats $totalSeats, array $journeys): void
     {
-        $this->availableSeats = self::calculateAvailableSeats($totalSeats, $journeys);
+        $this->availableSeats = $this->calculateAvailableSeats($totalSeats, $journeys);
     }
 
-    private static function calculateAvailableSeats(TotalSeats $totalSeats, array $journeys): AvailableSeats
+    private function calculateAvailableSeats(TotalSeats $totalSeats, array $journeys): AvailableSeats
     {
         $usedSeats = 0;
+
         foreach ($journeys as $journey) {
             $usedSeats += $journey->getTotalPeople()->getCount();
         }
@@ -101,7 +93,7 @@ class Car
         $tempJourney = $journeys;
         $tempJourney[$journey->getJourneyId()->getId()] = $journey;
 
-        self::calculateAvailableSeats($totalSeats, $tempJourney);
+        $this->calculateAvailableSeats($totalSeats, $tempJourney);
     }
 
     private function checkOrThrowDropOffAction(array $journeys, Journey $journey): void
@@ -119,5 +111,16 @@ class Car
     private function removeJourney(Journey $journey): void
     {
         unset($this->journeys[$journey->getJourneyId()->getId()]);
+    }
+
+    public function setJourneys(array $journeys): void
+    {
+        $this->journeys = [];
+
+        foreach ($journeys as $journey) {
+            $this->addJourney($journey);
+        }
+
+        $this->setAvailableSeats($this->getTotalSeats(), $journeys);
     }
 }

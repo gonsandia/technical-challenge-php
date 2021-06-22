@@ -49,8 +49,8 @@ class PerformJourneyController extends AbstractController
         $body = json_decode($request->getContent(), true);
 
         return new PerformJourneyRequest(
-            new JourneyId($body['id']),
-            new TotalPeople($body['people'])
+            new JourneyId((int)$body['id']),
+            new TotalPeople((int)$body['people'])
         );
     }
 }
