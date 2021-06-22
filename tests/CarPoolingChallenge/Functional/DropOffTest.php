@@ -17,10 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DropOffTest extends WebTestCase
 {
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
+
+    private ?EntityManager $entityManager;
 
     protected function setUp(): void
     {

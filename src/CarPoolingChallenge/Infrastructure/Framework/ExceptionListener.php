@@ -4,6 +4,7 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Framework;
 
 use Gonsandia\CarPoolingChallenge\Application\Exception\ContentTypeException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
+use Gonsandia\CarPoolingChallenge\Domain\Exception\JourneyNotExistsException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -27,7 +28,7 @@ class ExceptionListener
 //            $exception instanceof InvalidArgumentException, $exception instanceof SerializationException, $exception instanceof AssertMessageException, $exception instanceof AssertPayloadException => Response::HTTP_BAD_REQUEST,
 //            $exception instanceof AuthenticationException => Response::HTTP_UNAUTHORIZED,
 //            $exception instanceof AccessDeniedException => Response::HTTP_FORBIDDEN,
-            $exception instanceof CarNotExistsException => Response::HTTP_NOT_FOUND,
+            $exception instanceof CarNotExistsException, $exception instanceof JourneyNotExistsException => Response::HTTP_NOT_FOUND,
 //            $exception instanceof DomainLogicException => Response::HTTP_NO_CONTENT,
             $exception instanceof ContentTypeException => Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
             $exception instanceof HttpException => $exception->getStatusCode(),

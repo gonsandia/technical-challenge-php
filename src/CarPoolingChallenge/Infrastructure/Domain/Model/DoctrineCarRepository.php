@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
@@ -86,6 +87,10 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         $car = $this->findOneBy(['carId' => $carId]);
 
         $this->fillCarWithJourneys($car);
+
+        if(is_null($car)) {
+            throw new CarNotExistsException();
+        }
 
         return $car;
     }

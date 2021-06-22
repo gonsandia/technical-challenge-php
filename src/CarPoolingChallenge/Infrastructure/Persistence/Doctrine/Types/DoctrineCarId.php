@@ -15,7 +15,7 @@ final class DoctrineCarId extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         $className = CarId::class;
-        return new $className((int)$value);
+        return is_null($value) ? null : new $className((int)$value);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)

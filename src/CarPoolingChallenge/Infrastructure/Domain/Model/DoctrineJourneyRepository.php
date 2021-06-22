@@ -4,6 +4,8 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Domain\Model;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
+use Gonsandia\CarPoolingChallenge\Domain\Exception\JourneyNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
@@ -33,6 +35,10 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
     public function ofId(JourneyId $journeyId): Journey
     {
         $journey = $this->findOneBy(['journeyId' => $journeyId]);
+
+        if(is_null($journey)) {
+            throw new JourneyNotExistsException();
+        }
 
         return $journey;
     }
