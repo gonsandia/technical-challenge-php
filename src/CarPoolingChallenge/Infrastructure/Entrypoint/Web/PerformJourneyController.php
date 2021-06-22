@@ -6,6 +6,7 @@ use Gonsandia\CarPoolingChallenge\Application\Service\PerformJourney\PerformJour
 use Gonsandia\CarPoolingChallenge\Application\Service\PerformJourney\PerformJourneyService;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
+use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\BodyDeserializationException;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,10 +32,10 @@ class PerformJourneyController extends AbstractController
         $journey = $this->journeyService->execute($action);
 
         if (is_null($journey->getCarId())) {
-            return new Response(null, Response::HTTP_OK);
+            return new Response(null, Response::HTTP_ACCEPTED);
         }
 
-        return new Response(null, Response::HTTP_ACCEPTED);
+        return new Response(null, Response::HTTP_OK);
     }
 
     private function assertContentType(Request $request, string $contentType): void
@@ -46,11 +47,22 @@ class PerformJourneyController extends AbstractController
 
     private function serializeRequest(Request $request): PerformJourneyRequest
     {
-        $body = json_decode($request->getContent(), true);
+        $body = $this->serializeBody($request);
 
         return new PerformJourneyRequest(
             new JourneyId((int)$body['id']),
             new TotalPeople((int)$body['people'])
         );
+    }
+
+    private function serializeBody(Request $request): mixed
+    {
+        try {
+            return json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        } catch (\Exception $exception) {
+            throw new BodyDeserializationException();
+        }
+
     }
 }

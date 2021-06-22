@@ -90,7 +90,6 @@ class LoadAvailableCarsServiceTest extends TestCase
                     new TotalSeats(6)
                 ),
             ]
-
         );
 
         $service = new LoadAvailableCarsService($this->carRepository);

@@ -8,20 +8,26 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarFound;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
 
 class LocateCarService implements ApplicationService
 {
     private CarRepository $carRepository;
 
-    public function __construct(CarRepository $carRepository)
+    private JourneyRepository $journeyRepository;
+
+    public function __construct(CarRepository $carRepository, JourneyRepository $journeyRepository)
     {
         $this->carRepository = $carRepository;
+        $this->journeyRepository = $journeyRepository;
     }
 
     public function execute($request = null): ?Car
     {
         $journeyId = $request->getJourneyId();
-        return $this->locateCarOfJourneyId($journeyId);
+        $journey =  $this->journeyRepository->ofId($journeyId);
+
+        return $this->locateCarOfJourneyId($journey->getJourneyId());
     }
 
 

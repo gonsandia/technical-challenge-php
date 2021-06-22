@@ -14,11 +14,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 //
 //    $kernel = new Kernel($context['APP_ENV'], (bool)$context['APP_DEBUG']);
 //
-//    DomainEventPublisher::instance()->subscribe(
-//        new LoggerDomainEventSubscriber(
-//            $kernel->getContainer()->get(LoggerInterface::class)
-//        )
-//    );
+
 //
 //    return $kernel;
 //};
@@ -32,6 +28,15 @@ if ($_SERVER['APP_DEBUG']) {
 }
 
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+
+$kernel->boot();
+
+DomainEventPublisher::instance()->subscribe(
+    new LoggerDomainEventSubscriber(
+        new Monolog\Logger('huj')
+    )
+);
+
 $request = Request::createFromGlobals();
 
 $response = $kernel->handle($request);

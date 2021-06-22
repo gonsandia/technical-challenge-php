@@ -7,6 +7,7 @@ use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvai
 use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
+use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\BodyDeserializationException;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LoadAvailableCarsController extends AbstractController
 {
-    public const FORM_CONTENT_TYPE = 'form';
+    public const FORM_CONTENT_TYPE = 'json';
 
     private LoadAvailableCarsService $loadAvailableCars;
 
@@ -43,7 +44,9 @@ class LoadAvailableCarsController extends AbstractController
 
     private function serializeRequest(Request $request): LoadAvailableCarsRequest
     {
-        $cars = $this->loadCarsFromArray($request->get('cars'));
+        $body = $this->serializeBody($request);
+
+        $cars = $this->loadCarsFromArray($body);
 
         return new LoadAvailableCarsRequest(
             $cars
@@ -61,5 +64,16 @@ class LoadAvailableCarsController extends AbstractController
         }
 
         return $loadedCars;
+    }
+
+    private function serializeBody(Request $request): mixed
+    {
+        try {
+            return json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        } catch (\Exception $exception) {
+            throw new BodyDeserializationException();
+        }
+
     }
 }

@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DropOffTest extends WebTestCase
 {
-
     private ?EntityManager $entityManager;
 
     protected function setUp(): void
@@ -110,6 +109,32 @@ class DropOffTest extends WebTestCase
         $code = $client->getResponse()->getStatusCode();
 
         self::assertEquals(Response::HTTP_NOT_FOUND, $code);
+    }
+
+    /**
+     * @test use case
+     */
+    public function given_invalid_content_type_when_call_drop_off_then_405(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $data =
+            [
+                "ID" => 1,
+            ];
+
+        $client->request(
+            'POST',
+            '/dropoff',
+            $data,
+            [],
+            ['CONTENT_TYPE' => 'text/plain']
+        );
+
+        $code = $client->getResponse()->getStatusCode();
+
+        self::assertEquals(Response::HTTP_UNSUPPORTED_MEDIA_TYPE, $code);
     }
 
     /**

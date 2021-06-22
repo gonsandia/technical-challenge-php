@@ -4,7 +4,7 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Exception;
 
 use Throwable;
 
-class InvalidContentTypeException extends \Exception
+class InvalidContentTypeException extends InfrastructureException
 {
     public function __construct($message = 'Invalid content type found.', $code = 0, Throwable $previous = null)
     {

@@ -20,9 +20,31 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
 
     public function save(Journey $journey): void
     {
+        if ($this->update($journey)) {
+            return;
+        }
+
         $this->_em->persist($journey);
 
         $this->_em->flush();
+    }
+
+    private function update(Journey $journey)
+    {
+        $qb = $this->createQueryBuilder('j');
+
+        $qb
+            ->update(Journey::class, 'j')
+            ->set('j.totalPeople.count', ':totalPeople')
+            ->set('j.carId', ':carId')
+            ->andWhere($qb->expr()->eq('j.journeyId', ':journeyId'))
+            ->setParameter('totalPeople', $journey->getTotalPeople()->getCount())
+            ->setParameter('carId', $journey->getCarId())
+            ->setParameter('journeyId', $journey->getJourneyId());
+
+        $result = $qb->getQuery()->execute();
+
+        return 1 == $result;
     }
 
     public function remove(Journey $journey): void
@@ -36,7 +58,7 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
     {
         $journey = $this->findOneBy(['journeyId' => $journeyId]);
 
-        if(is_null($journey)) {
+        if (is_null($journey)) {
             throw new JourneyNotExistsException();
         }
 
@@ -69,7 +91,7 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
 
     public function clearTable(): mixed
     {
-        $qb = $this->createQueryBuilder('c');
+        $qb = $this->createQueryBuilder('j');
 
         $qb->delete();
 
@@ -92,5 +114,4 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
 
         return $journeys;
     }
-
 }

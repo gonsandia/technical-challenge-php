@@ -69,4 +69,37 @@ class LoadAvailableCarsTest extends WebTestCase
 
         self::assertEquals(Response::HTTP_OK, $code);
     }
+
+    /**
+     * @test use case
+     */
+    public function given_invalid_content_type_when_call_drop_off_then_405(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $data = [
+            [
+                "id" => 1,
+                "seats" => 4
+            ],
+            [
+                "id" => 2,
+                "seats" => 6
+            ]
+        ];
+
+        $client->request(
+            'PUT',
+            '/cars',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'text/plain'],
+            json_encode($data, JSON_THROW_ON_ERROR)
+        );
+
+        $code = $client->getResponse()->getStatusCode();
+
+        self::assertEquals(Response::HTTP_UNSUPPORTED_MEDIA_TYPE, $code);
+    }
 }

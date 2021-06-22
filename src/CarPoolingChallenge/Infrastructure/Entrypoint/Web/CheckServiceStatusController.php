@@ -8,11 +8,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CheckServiceStatusController extends AbstractController
 {
-    /**
-     * Entrypoint for Check server status Use case.
-     *
-     * @Route("/status", name="status", methods={"GET"})
-     */
     public function index(): Response
     {
         return $this->json(null, Response::HTTP_OK);

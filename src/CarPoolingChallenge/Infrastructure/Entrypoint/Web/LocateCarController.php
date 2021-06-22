@@ -2,9 +2,6 @@
 
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
 
-use App\Common\Exception\QueryNotFoundException;
-use App\Message\Query\FindCarQuery;
-use App\Model\Domain\Car;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarService;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
@@ -53,7 +50,7 @@ class LocateCarController extends AbstractController
     private function serializeRequest(Request $request): LocateCarRequest
     {
         return new LocateCarRequest(
-            new JourneyId((int)$request->get('ID'))
+            new JourneyId((int)$request->request->get('ID'))
         );
     }
 }

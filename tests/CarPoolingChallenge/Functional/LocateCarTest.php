@@ -37,7 +37,7 @@ class LocateCarTest extends WebTestCase
      */
     public function given_journey_id_when_wait_for_car_then_no_content()
     {
-        $this->setDbStateCarWithJourneyAssigned();
+        $this->setDbStateJourneyWithPendingCar();
 
         self::ensureKernelShutdown();
         $client = PerformJourneyTest::createClient();
@@ -84,9 +84,10 @@ class LocateCarTest extends WebTestCase
         );
 
         $code = $client->getResponse()->getStatusCode();
+        $responseData = json_decode($client->getResponse()->getContent(), true);
 
         self::assertEquals(Response::HTTP_OK, $code);
-        self::assertEquals(['id' => 1, 'seats' => 3], json_decode($client->getResponse()->getContent(), true));
+        self::assertEquals(['id' => 1, 'seats' => 4], $responseData);
     }
 
     /**
@@ -115,6 +116,53 @@ class LocateCarTest extends WebTestCase
         $code = $client->getResponse()->getStatusCode();
 
         self::assertEquals(Response::HTTP_NOT_FOUND, $code);
+    }
+
+    /**
+     * @test use case
+     */
+    public function given_invalid_content_type_when_call_drop_off_then_405(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $data =
+            [
+                "ID" => 1,
+            ];
+
+        $client->request(
+            'POST',
+            '/locate',
+            $data,
+            [],
+            ['CONTENT_TYPE' => 'text/plain']
+        );
+
+        $code = $client->getResponse()->getStatusCode();
+
+        self::assertEquals(Response::HTTP_UNSUPPORTED_MEDIA_TYPE, $code);
+    }
+
+    private function setDbStateJourneyWithPendingCar()
+    {
+        /** @var CarRepository $carRepository */
+        $carRepository = $this->entityManager->getRepository(Car::class);
+        /** @var JourneyRepository $journeyRepository */
+        $journeyRepository = $this->entityManager->getRepository(Journey::class);
+
+        // clear tables
+        $carRepository->clearTable();
+        $journeyRepository->clearTable();
+
+        // add car
+        $car1 = Car::from(new CarId(1), new TotalSeats(4));
+
+        // add journey
+        $journey1 = Journey::from(new JourneyId(1), new TotalPeople(4));
+
+        $carRepository->save($car1);
+        $journeyRepository->save($journey1);
     }
 
     /**

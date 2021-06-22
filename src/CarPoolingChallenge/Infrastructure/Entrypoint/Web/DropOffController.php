@@ -5,6 +5,7 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
 use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffService;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
+use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +35,7 @@ class DropOffController extends AbstractController
     private function assertContentType(Request $request, string $contentType): void
     {
         if ($request->getContentType() !== $contentType) {
-            throw new \Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException();
+            throw new InvalidContentTypeException();
         }
     }
 

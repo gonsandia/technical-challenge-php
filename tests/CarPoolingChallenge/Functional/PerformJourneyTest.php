@@ -59,7 +59,7 @@ class PerformJourneyTest extends WebTestCase
 
         $code = $client->getResponse()->getStatusCode();
 
-        $this->assertEquals(Response::HTTP_OK, $code);
+        self::assertEquals(Response::HTTP_OK, (int) $code);
     }
 
     /**
@@ -89,7 +89,35 @@ class PerformJourneyTest extends WebTestCase
 
         $code = $client->getResponse()->getStatusCode();
 
-        $this->assertEquals(Response::HTTP_ACCEPTED, $code);
+        self::assertEquals(Response::HTTP_ACCEPTED, (int) $code);
+    }
+
+    /**
+     * @test use case
+     */
+    public function given_invalid_content_type_when_call_drop_off_then_405(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $data =
+            [
+                "id" => 1,
+                "people" => 4
+            ];
+
+        $client->request(
+            'POST',
+            '/journey',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'text/plain'],
+            json_encode($data, JSON_THROW_ON_ERROR)
+        );
+
+        $code = $client->getResponse()->getStatusCode();
+
+        self::assertEquals(Response::HTTP_UNSUPPORTED_MEDIA_TYPE, $code);
     }
 
     /**
@@ -111,6 +139,7 @@ class PerformJourneyTest extends WebTestCase
         // add car
         $car1 = Car::from(new CarId(1), new TotalSeats(6));
         $journey1 = Journey::from(new JourneyId(1), new TotalPeople(6));
+        $car1->performJourney($journey1);
 
         // persist
         $carRepository->save($car1);
@@ -136,6 +165,7 @@ class PerformJourneyTest extends WebTestCase
         // add car
         $car1 = Car::from(new CarId(1), new TotalSeats(6));
         $journey1 = Journey::from(new JourneyId(1), new TotalPeople(1));
+        $car1->performJourney($journey1);
 
         // persist
         $carRepository->save($car1);

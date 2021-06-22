@@ -33,6 +33,14 @@ class PerformJourneyService implements ApplicationService
         if (!is_null($car)) {
             $car->performJourney($journey);
             $this->carRepository->save($car);
+
+            DomainEventPublisher::instance()->publish(
+                JourneyPerformed::from($journey)
+            );
+        } else {
+            DomainEventPublisher::instance()->publish(
+                JourneyQueued::from($journey)
+            );
         }
 
         $this->journeyRepository->save($journey);
@@ -43,16 +51,6 @@ class PerformJourneyService implements ApplicationService
     private function findCarForJourney(Journey $journey): ?Car
     {
         $car = $this->carRepository->findCarWithEnoughEmptySeatsForGroup($journey->getTotalPeople());
-
-        if (!is_null($car)) {
-            DomainEventPublisher::instance()->publish(
-                JourneyPerformed::from($journey)
-            );
-        } else {
-            DomainEventPublisher::instance()->publish(
-                JourneyQueued::from($journey)
-            );
-        }
 
         return $car;
     }

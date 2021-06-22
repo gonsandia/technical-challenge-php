@@ -5,6 +5,8 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Framework;
 use Gonsandia\CarPoolingChallenge\Application\Exception\ContentTypeException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\JourneyNotExistsException;
+use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\BodyDeserializationException;
+use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -25,15 +27,16 @@ class ExceptionListener
         $exception = $event->getThrowable();
 
         $statusCode = match (true) {
-//            $exception instanceof InvalidArgumentException, $exception instanceof SerializationException, $exception instanceof AssertMessageException, $exception instanceof AssertPayloadException => Response::HTTP_BAD_REQUEST,
+            $exception instanceof BodyDeserializationException, $exception instanceof HttpException => Response::HTTP_BAD_REQUEST,
+                $exception instanceof InvalidContentTypeException => Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
 //            $exception instanceof AuthenticationException => Response::HTTP_UNAUTHORIZED,
 //            $exception instanceof AccessDeniedException => Response::HTTP_FORBIDDEN,
             $exception instanceof CarNotExistsException, $exception instanceof JourneyNotExistsException => Response::HTTP_NOT_FOUND,
 //            $exception instanceof DomainLogicException => Response::HTTP_NO_CONTENT,
-            $exception instanceof ContentTypeException => Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
-            $exception instanceof HttpException => $exception->getStatusCode(),
-            default => Response::HTTP_INTERNAL_SERVER_ERROR,
+            default => Response::HTTP_BAD_REQUEST,
         };
+
+        $this->logger->error($exception->getMessage());
 
         $message = [
             'message' => $exception->getMessage(),

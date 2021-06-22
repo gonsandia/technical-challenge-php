@@ -12,6 +12,7 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
 use PHPUnit\Framework\TestCase;
@@ -20,11 +21,15 @@ class LocateCarServiceTest extends TestCase
 {
     private CarRepository $carRepository;
 
+    private JourneyRepository $journeyRepository;
+
     protected function setUp(): void
     {
         // $carRepository = new InMemoryCarRepository();
         $mockCarRepository = $this->createMock(CarRepository::class);
+        $mockJourneyRepository = $this->createMock(JourneyRepository::class);
         $this->carRepository = $mockCarRepository;
+        $this->journeyRepository = $mockJourneyRepository;
         parent::setUp();
     }
     public function testShouldPublishCarFoundEvent(): void
@@ -45,7 +50,8 @@ class LocateCarServiceTest extends TestCase
                 $this->getCarOfJourney()
             );
 
-        $service = new LocateCarService($stubCarRepository);
+
+        $service = new LocateCarService($stubCarRepository, $this->journeyRepository);
 
         $car = $service->execute($request);
 

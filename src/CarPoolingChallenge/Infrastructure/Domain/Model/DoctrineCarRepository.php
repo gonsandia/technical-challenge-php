@@ -45,9 +45,31 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
      */
     public function save(Car $car): void
     {
+        if ($this->update($car)) {
+            return;
+        }
+
         $this->_em->persist($car);
 
         $this->_em->flush();
+    }
+
+    private function update(Car $car)
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        $qb
+            ->update(Car::class, 'c')
+            ->set('c.availableSeats.count', ':availableSeats')
+            ->set('c.totalSeats.count', ':totalSeats')
+            ->andWhere($qb->expr()->eq('c.carId ', ':carId'))
+            ->setParameter('availableSeats', $car->getAvailableSeats()->getCount())
+            ->setParameter('totalSeats', $car->getTotalSeats()->getCount())
+            ->setParameter('carId', $car->getCarId());
+
+        $result = $qb->getQuery()->execute();
+
+        return 1 == $result;
     }
 
     public function clearTable(): mixed
@@ -67,7 +89,7 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         $qb->select();
 
         $qb
-            ->andWhere($qb->expr()->gte('c.availableSeats', ':availableSeats'));
+            ->andWhere($qb->expr()->gte('c.availableSeats.count', ':availableSeats'));
 
         $qb
             ->setParameter('availableSeats', $totalPeople->getCount());
@@ -88,7 +110,7 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
 
         $this->fillCarWithJourneys($car);
 
-        if(is_null($car)) {
+        if (is_null($car)) {
             throw new CarNotExistsException();
         }
 
