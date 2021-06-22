@@ -37,7 +37,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         php8.0-zip \
         php8.0-xml \
         php8.0-curl \
-        php8.0-mysql \
+        php8.0-sqlite \
+#        php8.0-xdebug \
     && apt-get autoremove -y && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
@@ -56,6 +57,7 @@ RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/
 # Configure PHP-FPM
 ADD ./docker/php/fpm-pool.conf /etc/php/8.0/fpm/pool.d/www.conf
 ADD ./docker/php/php.ini /etc/php/8.0/fpm/conf.d/custom.ini
+#ADD ./docker/php/xdebug.ini /etc/php/8.0/mods-available/xdebug.ini
 
 # Configure supervisord
 ADD ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
