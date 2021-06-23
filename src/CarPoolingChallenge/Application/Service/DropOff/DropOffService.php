@@ -39,11 +39,11 @@ class DropOffService implements ApplicationService
             }
         }
 
+        $this->journeyRepository->remove($journey);
+
         DomainEventPublisher::instance()->publish(
             DropOffDone::from($journey)
         );
-
-        $this->journeyRepository->remove($journey);
 
         return true;
     }

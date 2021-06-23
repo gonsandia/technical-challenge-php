@@ -94,9 +94,9 @@ class LoadAvailableCarsServiceTest extends TestCase
 
         $service = new LoadAvailableCarsService($this->carRepository);
 
-        $result = $service->execute($request);
+        $cars = $service->execute($request);
 
-        self::assertNotEmpty($result->getCars());
+        self::assertNotEmpty($cars);
     }
 
     public function testShouldNotCreateAvailableCarListFromRequestInvalidNumberOfSeats(): void

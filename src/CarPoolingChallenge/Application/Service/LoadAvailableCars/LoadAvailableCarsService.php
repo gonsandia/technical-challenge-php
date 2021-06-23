@@ -20,16 +20,16 @@ class LoadAvailableCarsService implements ApplicationService
         $this->carRepository = $carRepository;
     }
 
-    public function execute($request = null): LoadAvailableCarsResponse
+    public function execute($request = null)
     {
         $cars = $request->getCars();
+
+        $this->carRepository->loadCars($cars);
 
         DomainEventPublisher::instance()->publish(
             CarsLoaded::from($cars)
         );
 
-        $this->carRepository->loadCars($cars);
-
-        return new LoadAvailableCarsResponse($cars);
+        return $cars;
     }
 }

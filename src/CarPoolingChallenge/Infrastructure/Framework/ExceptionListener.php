@@ -2,7 +2,7 @@
 
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\Framework;
 
-use Gonsandia\CarPoolingChallenge\Application\Exception\ContentTypeException;
+use Assert\InvalidArgumentException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\JourneyNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\UuidProvider;
@@ -12,7 +12,7 @@ use Gonsandia\CarPoolingChallenge\Infrastructure\Trace\RequestTracer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class ExceptionListener
 {
@@ -29,16 +29,17 @@ class ExceptionListener
         $exception = $event->getThrowable();
 
         $statusCode = match (true) {
-            $exception instanceof BodyDeserializationException, $exception instanceof HttpException => Response::HTTP_BAD_REQUEST,
+            $exception instanceof InvalidArgumentException, $exception instanceof BodyDeserializationException, $exception instanceof MethodNotAllowedHttpException => Response::HTTP_BAD_REQUEST,
             $exception instanceof InvalidContentTypeException => Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
             $exception instanceof CarNotExistsException, $exception instanceof JourneyNotExistsException => Response::HTTP_NOT_FOUND,
-            default => Response::HTTP_BAD_REQUEST,
+            default => Response::HTTP_INTERNAL_SERVER_ERROR,
         };
 
         $message = [
             'correlation_id' => UuidProvider::instance()->getId(),
             'message' => $exception->getMessage(),
             'code' => $exception->getCode(),
+            'type' => get_class($exception)
         ];
 
         if (RequestTracer::instance()->hasRequest()) {

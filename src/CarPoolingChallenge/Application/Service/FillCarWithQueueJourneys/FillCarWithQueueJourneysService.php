@@ -33,12 +33,12 @@ class FillCarWithQueueJourneysService implements ApplicationService
         if (!is_null($journey)) {
             $car->performJourney($journey);
 
+            $this->carRepository->save($car);
+            $this->journeyRepository->save($journey);
+
             DomainEventPublisher::instance()->publish(
                 JourneyPerformed::from($journey)
             );
-
-            $this->carRepository->save($car);
-            $this->journeyRepository->save($journey);
         }
     }
 
