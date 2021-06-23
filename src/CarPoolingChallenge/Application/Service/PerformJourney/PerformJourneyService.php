@@ -33,7 +33,11 @@ class PerformJourneyService implements ApplicationService
         if (!is_null($car)) {
             $car->performJourney($journey);
             $this->carRepository->save($car);
+        }
 
+        $this->journeyRepository->save($journey);
+
+        if (!is_null($journey->getCarId())) {
             DomainEventPublisher::instance()->publish(
                 JourneyPerformed::from($journey)
             );
@@ -42,8 +46,6 @@ class PerformJourneyService implements ApplicationService
                 JourneyQueued::from($journey)
             );
         }
-
-        $this->journeyRepository->save($journey);
 
         return $journey;
     }
