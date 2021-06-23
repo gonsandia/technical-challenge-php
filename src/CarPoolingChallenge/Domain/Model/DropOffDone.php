@@ -69,5 +69,4 @@ class DropOffDone implements DomainEvent
     {
         return UuidProvider::instance()->getId();
     }
-
 }
