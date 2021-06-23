@@ -5,8 +5,10 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Framework;
 use Gonsandia\CarPoolingChallenge\Application\Exception\ContentTypeException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\JourneyNotExistsException;
+use Gonsandia\CarPoolingChallenge\Domain\UuidProvider;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\BodyDeserializationException;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
+use Gonsandia\CarPoolingChallenge\Infrastructure\Trace\RequestTracer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -28,24 +30,23 @@ class ExceptionListener
 
         $statusCode = match (true) {
             $exception instanceof BodyDeserializationException, $exception instanceof HttpException => Response::HTTP_BAD_REQUEST,
-                $exception instanceof InvalidContentTypeException => Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
-//            $exception instanceof AuthenticationException => Response::HTTP_UNAUTHORIZED,
-//            $exception instanceof AccessDeniedException => Response::HTTP_FORBIDDEN,
+            $exception instanceof InvalidContentTypeException => Response::HTTP_UNSUPPORTED_MEDIA_TYPE,
             $exception instanceof CarNotExistsException, $exception instanceof JourneyNotExistsException => Response::HTTP_NOT_FOUND,
-//            $exception instanceof DomainLogicException => Response::HTTP_NO_CONTENT,
             default => Response::HTTP_BAD_REQUEST,
         };
 
-        $this->logger->error($exception->getMessage());
-
         $message = [
+            'request' => RequestTracer::instance()->getSerializedRequest(),
+            'correlation_id' => UuidProvider::instance()->getId(),
             'message' => $exception->getMessage(),
             'code' => $exception->getCode(),
         ];
 
-        $json = '';
+        $json = json_encode($message, JSON_THROW_ON_ERROR);
 
-        $response = new Response($json, $statusCode);
+        $this->logger->error($json);
+
+        $response = new Response('', $statusCode);
 
         // sends the modified response object to the event
         $event->setResponse($response);
