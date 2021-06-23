@@ -90,6 +90,8 @@ class DropOffTest extends WebTestCase
      */
     public function given_journey_id_when_group_not_found_then_not_found(): void
     {
+        $this->setCleanState();
+
         self::ensureKernelShutdown();
         $client = static::createClient();
 

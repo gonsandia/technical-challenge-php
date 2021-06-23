@@ -8,7 +8,7 @@ interface CarRepository
 
     public function save(Car $car): void;
 
-    public function findCarWithEnoughEmptySeatsForGroup(TotalPeople $totalPeople): ?Car;
+    public function findCarForPeople(TotalPeople $totalPeople): ?Car;
 
     public function ofJourneyId(JourneyId $journeyId): ?Car;
 

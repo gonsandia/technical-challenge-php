@@ -30,13 +30,10 @@ class DropOffService implements ApplicationService
 
         $journey = $this->findJourneyOfId($journeyId);
 
-        if ($this->checkIfCarIsAssigned($journey)) {
+        if ($journey->hasCarAssigned()) {
             $car = $this->findCarOfId($journey->getCarId());
-
-            if (!is_null($car)) {
-                $car->dropOff($journey);
-                $this->carRepository->save($car);
-            }
+            $car->dropOff($journey);
+            $this->carRepository->save($car);
         }
 
         $this->journeyRepository->remove($journey);
@@ -53,13 +50,8 @@ class DropOffService implements ApplicationService
         return $this->journeyRepository->ofId($journeyId);
     }
 
-    private function findCarOfId(CarId $carId): ?Car
+    private function findCarOfId(CarId $carId): Car
     {
         return $this->carRepository->ofId($carId);
-    }
-
-    private function checkIfCarIsAssigned(Journey $journey): bool
-    {
-        return !is_null($journey->getCarId());
     }
 }

@@ -82,7 +82,7 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
     }
 
 
-    public function findCarWithEnoughEmptySeatsForGroup(TotalPeople $totalPeople): ?Car
+    public function findCarForPeople(TotalPeople $totalPeople): ?Car
     {
         $qb = $this->createQueryBuilder('c');
 

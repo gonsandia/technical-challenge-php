@@ -62,4 +62,10 @@ class Journey
     {
         return serialize($this);
     }
+
+    public function hasCarAssigned(): bool
+    {
+        return !is_null($this->getCarId());
+    }
+
 }

@@ -47,7 +47,7 @@ class PerformJourneyServiceTest extends TestCase
         $stubCarRepository = $this->carRepository;
 
         $stubCarRepository
-            ->method('findCarWithEnoughEmptySeatsForGroup')
+            ->method('findCarForPeople')
             ->willReturn(
                 $this->getEmptyCar()
             );

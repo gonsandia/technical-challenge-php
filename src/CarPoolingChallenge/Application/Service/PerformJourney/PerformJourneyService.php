@@ -52,7 +52,7 @@ class PerformJourneyService implements ApplicationService
 
     private function findCarForJourney(Journey $journey): ?Car
     {
-        $car = $this->carRepository->findCarWithEnoughEmptySeatsForGroup($journey->getTotalPeople());
+        $car = $this->carRepository->findCarForPeople($journey->getTotalPeople());
 
         return $car;
     }
