@@ -211,3 +211,45 @@ following survey:
 - https://forms.gle/EzPeURspTCLG1q9T7
 
 Your participation is really important. Thanks for your contribution!
+
+## Project explanation
+
+- Architecture:
+  Following best practices, the project has a hexagonal architecture with domain, application and infrastructure layers.
+  The advantages of this approach are
+  - the code is easy to test
+  - Dependencies can be changed easily
+
+- Domain Driven Design:
+  The tactical rules of domain-driven design work very well with the hexagonal architecture. I have used
+    - Value object pattern to define the business rules.
+    - Repository pattern to persist the domain entities.
+    - Attempted to use ubiquitous language.
+    - Domain Events
+
+- Entrypoint:
+  The entrypoint of the application is a web interface. I defined the controllers to handle the requests.
+  Each controller calls the use case defined in the application service. This use case can trigger one or more domain events.
+
+- Persistence:
+  Because php is a scripting language that cannot share data between requests I had to use a persistence layer.
+  In this case, I used a simple sqlite database with a data mapper, in this case, Doctrine ORM.
+
+- Testing:
+  Following the pyramid testing approach, I tried to do as much coverage in the domain and application layer with unit tests for business rules.
+  The project has on the src folder 90% files and 71% lines.
+  I missed the integration tests, but covered them with the functional ones
+  
+- Technology stack:
+  It is a php 8 application, served with a nginx server and php-fpm. 
+  I used the symfony framework for routing, dependency injection and error handling.
+  I use a code style linter to ensure compliance with the psr-12 code style standard https://www.php-fig.org/psr/psr-12/
+
+- Observability:
+  I did this with logs, I followed the https://www.php-fig.org/psr/psr-3/ standard for logging.
+  Each domain event will be logged in the domain event log.
+  It will be tracked with a correlation_id for each error log and dispatched domain event.
+  In addition, for errors the details of the request will be tracked.
+
+- Version Control:
+  Because this is a one-man project, I have used the trunk based development approach.

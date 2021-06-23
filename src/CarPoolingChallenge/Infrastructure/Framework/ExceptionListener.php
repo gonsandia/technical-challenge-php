@@ -36,11 +36,14 @@ class ExceptionListener
         };
 
         $message = [
-            'request' => RequestTracer::instance()->getSerializedRequest(),
             'correlation_id' => UuidProvider::instance()->getId(),
             'message' => $exception->getMessage(),
             'code' => $exception->getCode(),
         ];
+
+        if (RequestTracer::instance()->hasRequest()) {
+            $message['request'] = RequestTracer::instance()->getSerializedRequest();
+        }
 
         $json = json_encode($message, JSON_THROW_ON_ERROR);
 

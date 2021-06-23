@@ -34,4 +34,9 @@ class RequestTracer
             'body' => $this->request->getContent(),
         ], JSON_THROW_ON_ERROR);
     }
+
+    public function hasRequest()
+    {
+        return isset($this->request);
+    }
 }
