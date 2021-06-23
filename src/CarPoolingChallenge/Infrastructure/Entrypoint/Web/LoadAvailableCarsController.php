@@ -4,6 +4,8 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
 
 use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvailableCarsRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvailableCarsService;
+use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalApplicationService;
+use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalSession;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
@@ -18,10 +20,12 @@ class LoadAvailableCarsController extends AbstractController
     public const FORM_CONTENT_TYPE = 'json';
 
     private LoadAvailableCarsService $loadAvailableCars;
+    private TransactionalSession $session;
 
-    public function __construct(LoadAvailableCarsService $loadAvailableCars)
+    public function __construct(LoadAvailableCarsService $loadAvailableCars, TransactionalSession $session)
     {
         $this->loadAvailableCars = $loadAvailableCars;
+        $this->session = $session;
     }
 
     public function index(Request $request): Response
@@ -30,7 +34,12 @@ class LoadAvailableCarsController extends AbstractController
 
         $action = $this->serializeRequest($request);
 
-        $this->loadAvailableCars->execute($action);
+        $transactionalService = new TransactionalApplicationService(
+            $this->loadAvailableCars,
+            $this->session
+        );
+
+        $transactionalService->execute($action);
 
         return new Response(null, Response::HTTP_OK);
     }

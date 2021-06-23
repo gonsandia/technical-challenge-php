@@ -4,6 +4,8 @@ namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
 
 use Gonsandia\CarPoolingChallenge\Application\Service\PerformJourney\PerformJourneyRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\PerformJourney\PerformJourneyService;
+use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalApplicationService;
+use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalSession;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\BodyDeserializationException;
@@ -17,10 +19,12 @@ class PerformJourneyController extends AbstractController
     public const JSON_CONTENT_TYPE = 'json';
 
     private PerformJourneyService $journeyService;
+    private TransactionalSession $session;
 
-    public function __construct(PerformJourneyService $journeyService)
+    public function __construct(PerformJourneyService $journeyService, TransactionalSession $session)
     {
         $this->journeyService = $journeyService;
+        $this->session = $session;
     }
 
     public function index(Request $request): Response
@@ -29,7 +33,12 @@ class PerformJourneyController extends AbstractController
 
         $action = $this->serializeRequest($request);
 
-        $journey = $this->journeyService->execute($action);
+        $transactionalService = new TransactionalApplicationService(
+            $this->journeyService,
+            $this->session
+        );
+
+        $journey = $transactionalService->execute($action);
 
         if (is_null($journey->getCarId())) {
             return new Response(null, Response::HTTP_ACCEPTED);
