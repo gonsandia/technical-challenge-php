@@ -5,6 +5,7 @@
          colors="true"
          verbose="true"
          failOnRisky="true"
+         executionOrder="random"
          failOnWarning="true">
 
     <testsuites>
