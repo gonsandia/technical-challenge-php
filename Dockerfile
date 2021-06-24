@@ -88,7 +88,7 @@ WORKDIR /var/www
 COPY / ./
 
 # Install dependencies
-RUN composer update --prefer-dist --optimize-autoloader
+RUN composer update --prefer-dist --optimize-autoloader --classmap-authoritative
 
 # Set owner and permission for cache and logs folders
 RUN chown -R nginx:nginx /var/www
