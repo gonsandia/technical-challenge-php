@@ -67,5 +67,4 @@ class Journey
     {
         return !is_null($this->getCarId());
     }
-
 }
