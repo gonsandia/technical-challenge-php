@@ -242,7 +242,7 @@ Your participation is really important. Thanks for your contribution!
   
 - Technology stack:
   It is a php 8 application, served with a nginx server and php-fpm. 
-  I used the symfony framework for routing, dependency injection and error handling.
+  I used the symfony framework for routing, caching, dependency injection and error handling.
   I use a code style linter to ensure compliance with the psr-12 code style standard https://www.php-fig.org/psr/psr-12/
 
 - Observability:
@@ -253,3 +253,7 @@ Your participation is really important. Thanks for your contribution!
 
 - Version Control:
   Because this is a one-man project, I have used the trunk based development approach.
+  
+- Efficiency:
+  Reduce log disk writing, minimize database access, and compile php classes. 
+  These reduce 50% the request time. Also set php and server params to improve performance
