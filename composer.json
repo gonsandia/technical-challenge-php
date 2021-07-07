@@ -1,6 +1,6 @@
 {
-    "name": "gonsadia/car-pooling-challenge",
-    "description": "Cabify technical challenge on php",
+    "name": "gonsadia/technical-challenge-php",
+    "description": "Technical challenge PHP",
     "type": "project",
     "require-dev": {
         "roave/security-advisories": "dev-latest",
