@@ -23,6 +23,15 @@ endif
 
 # Targets
 #
+.PHONY: db-create
+db-create: db-drop
+	php bin/console doctrine:database:create --no-interaction
+	php bin/console doctrine:schema:update --force --no-interaction
+
+.PHONY: db-drop
+db-drop:
+	php bin/console doctrine:database:drop --force
+
 .PHONY: debug
 debug:	### Debug Makefile itself
 	@echo $(UNAME)
