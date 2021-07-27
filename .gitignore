@@ -1,6 +1,7 @@
 /.idea/
 
 /vendor/
-/var/
+/var/log/
+/var/cache/
 /.php-cs-fixer.cache
 /.phpunit.result.cache
