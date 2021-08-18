@@ -9,8 +9,6 @@ interface DomainEvent extends \JsonSerializable
 {
     public function id(): UuidInterface;
 
-    public function correlationId(): UuidInterface;
-
     /**
      * @return DateTimeInterface
      */
