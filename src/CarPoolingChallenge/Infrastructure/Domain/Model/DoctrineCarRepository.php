@@ -36,7 +36,6 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         foreach ($cars as $car) {
             $this->_em->persist($car);
         }
-        $this->_em->flush();
     }
 
     /**

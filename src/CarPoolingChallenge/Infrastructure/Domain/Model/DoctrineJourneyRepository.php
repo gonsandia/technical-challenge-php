@@ -26,7 +26,6 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
 
         $this->_em->persist($journey);
 
-        $this->_em->flush();
     }
 
     private function update(Journey $journey)
@@ -50,8 +49,6 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
     public function remove(Journey $journey): void
     {
         $this->_em->remove($journey);
-
-        $this->_em->flush();
     }
 
     public function ofId(JourneyId $journeyId): Journey
