@@ -1,14 +1,12 @@
 <?php
 
-namespace Gonsandia\CarPoolingChallenge\Infrastructure\Framework;
+namespace Gonsandia\CarPoolingChallenge\Infrastructure\Symfony;
 
 use Assert\InvalidArgumentException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\JourneyNotExistsException;
-use Gonsandia\CarPoolingChallenge\Domain\UuidProvider;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\BodyDeserializationException;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
-use Gonsandia\CarPoolingChallenge\Infrastructure\Trace\RequestTracer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;

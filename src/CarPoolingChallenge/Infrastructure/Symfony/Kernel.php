@@ -1,6 +1,6 @@
 <?php
 
-namespace Gonsandia\CarPoolingChallenge\Infrastructure\Framework;
+namespace Gonsandia\CarPoolingChallenge\Infrastructure\Symfony;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
