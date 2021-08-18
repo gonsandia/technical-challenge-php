@@ -1,6 +1,6 @@
 <?php
 
-namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
+namespace Gonsandia\CarPoolingChallenge\Infrastructure\UI\Web;
 
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarService;

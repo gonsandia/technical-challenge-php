@@ -227,8 +227,8 @@ Your participation is really important. Thanks for your contribution!
     - Attempted to use ubiquitous language.
     - Domain Events
 
-- Entrypoint:
-  The entrypoint of the application is a web interface. I defined the controllers to handle the requests.
+- UI:
+  The UI of the application is a web interface. I defined the controllers to handle the requests.
   Each controller calls the use case defined in the application service. This use case can trigger one or more domain events.
 
 - Persistence:

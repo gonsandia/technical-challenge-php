@@ -10,10 +10,6 @@ class AvailableSeats
     public const MAX_SEATS = TotalSeats::MAX_SEATS;
     private int $count;
 
-    /**
-     * TotalSeats constructor.
-     * @param int $count
-     */
     public function __construct(int $count)
     {
         Assert::that($count)->between(self::MIN_SEATS, self::MAX_SEATS);

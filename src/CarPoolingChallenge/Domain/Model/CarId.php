@@ -2,21 +2,13 @@
 
 namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
-use Assert\Assert;
-
 class CarId
 {
-    public const FIRST_ID = 1;
+
     private ?int $id;
 
-    /**
-     * TotalSeats constructor.
-     * @param int $count
-     */
     public function __construct(int $count)
     {
-        Assert::that($count)->between(self::FIRST_ID, PHP_INT_MAX);
-
         $this->id = $count;
     }
 
@@ -38,8 +30,5 @@ class CarId
         return $this->getId() === $other->getId();
     }
 
-    public function addJourney(Journey $journey)
-    {
-        $this->journe;
-    }
+
 }

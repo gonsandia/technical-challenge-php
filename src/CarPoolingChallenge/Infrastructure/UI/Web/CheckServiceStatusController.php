@@ -1,6 +1,6 @@
 <?php
 
-namespace Gonsandia\CarPoolingChallenge\Infrastructure\Entrypoint\Web;
+namespace Gonsandia\CarPoolingChallenge\Infrastructure\UI\Web;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
