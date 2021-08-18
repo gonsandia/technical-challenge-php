@@ -4,7 +4,8 @@ namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
 use DateTimeInterface;
 use Gonsandia\CarPoolingChallenge\Domain\Event\DomainEvent;
-use Gonsandia\CarPoolingChallenge\Domain\UuidProvider;
+
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 class JourneyPerformed implements DomainEvent
@@ -74,11 +75,6 @@ class JourneyPerformed implements DomainEvent
 
     public function id(): UuidInterface
     {
-        return UuidProvider::instance()->getUUID();
-    }
-
-    public function correlationId(): UuidInterface
-    {
-        return UuidProvider::instance()->getId();
+        return Uuid::uuid4();
     }
 }

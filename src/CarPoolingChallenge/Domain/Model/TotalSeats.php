@@ -8,31 +8,22 @@ class TotalSeats
 {
     public const MIN_SEATS = 4;
     public const MAX_SEATS = 6;
-    private int $count;
 
+    private int $value;
 
-    public function __construct(int $count)
+    public function __construct(int $value)
     {
-        Assert::that($count)->between(self::MIN_SEATS, self::MAX_SEATS);
-
-        $this->count = $count;
+        Assert::that($value)->between(self::MIN_SEATS, self::MAX_SEATS);
+        $this->value = $value;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount(): int
+    public function value(): int
     {
-        return $this->count;
-    }
-
-    public function __toString()
-    {
-        return (string)$this->getCount();
+        return $this->value;
     }
 
     public function equals($other): bool
     {
-        return $this->getCount() === $other->getCount();
+        return $this->value() === $other->value();
     }
 }

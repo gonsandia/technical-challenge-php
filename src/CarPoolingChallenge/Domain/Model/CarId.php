@@ -4,31 +4,20 @@ namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
 class CarId
 {
+    private int $value;
 
-    private ?int $id;
-
-    public function __construct(int $count)
+    public function value(): int
     {
-        $this->id = $count;
+        return $this->value;
     }
 
-    /**
-     * @return int
-     */
-    public function getId(): int
+    public function __construct(int $value)
     {
-        return $this->id;
-    }
-
-    public function __toString()
-    {
-        return (string)$this->getId();
+        $this->value = $value;
     }
 
     public function equals($other): bool
     {
-        return $this->getId() === $other->getId();
+        return $this->value() === $other->value();
     }
-
-
 }

@@ -4,7 +4,8 @@ namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
 use DateTimeInterface;
 use Gonsandia\CarPoolingChallenge\Domain\Event\DomainEvent;
-use Gonsandia\CarPoolingChallenge\Domain\UuidProvider;
+
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 class CarFound implements DomainEvent
@@ -38,7 +39,6 @@ class CarFound implements DomainEvent
     {
         return json_encode([
             'id' => $this->id(),
-            'correlation_id' => $this->correlationId(),
             'car_id' => $this->carId,
             'journey_id' => $this->journeyId,
             'occurred_on' => $this->occurredOn->format(DATE_ATOM),
@@ -48,11 +48,6 @@ class CarFound implements DomainEvent
 
     public function id(): UuidInterface
     {
-        return UuidProvider::instance()->getUUID();
-    }
-
-    public function correlationId(): UuidInterface
-    {
-        return UuidProvider::instance()->getId();
+        return Uuid::uuid4();
     }
 }

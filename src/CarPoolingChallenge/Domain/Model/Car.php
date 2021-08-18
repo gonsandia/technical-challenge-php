@@ -2,10 +2,13 @@
 
 namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
+use Gonsandia\CarPoolingChallenge\Domain\Event\TriggerEventsTrait;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CantDropOffException;
 
-class Car
+class Car implements AggregateRoot
 {
+    use TriggerEventsTrait;
+
     private CarId $carId;
 
     private TotalSeats $totalSeats;
@@ -14,7 +17,7 @@ class Car
 
     private array $journeys = [];
 
-    public function __construct(CarId $carId, TotalSeats $totalSeats, array $journeys = [])
+    private function __construct(CarId $carId, TotalSeats $totalSeats, array $journeys = [])
     {
         $this->carId = $carId;
         $this->totalSeats = $totalSeats;
@@ -85,32 +88,32 @@ class Car
         foreach ($journeys as $journey) {
             $usedSeats += $journey->getTotalPeople()->getCount();
         }
-        return new AvailableSeats($totalSeats->getCount() - $usedSeats);
+        return new AvailableSeats($totalSeats->value() - $usedSeats);
     }
 
     private function checkOrThrowPerformAction(TotalSeats $totalSeats, array $journeys, Journey $journey): void
     {
         $tempJourney = $journeys;
-        $tempJourney[$journey->getJourneyId()->getId()] = $journey;
+        $tempJourney[$journey->getJourneyId()->value()] = $journey;
 
         $this->calculateAvailableSeats($totalSeats, $tempJourney);
     }
 
     private function checkOrThrowDropOffAction(array $journeys, Journey $journey): void
     {
-        if (!array_key_exists($journey->getJourneyId()->getId(), $journeys)) {
+        if (!array_key_exists($journey->getJourneyId()->value(), $journeys)) {
             throw new CantDropOffException();
         }
     }
 
     private function addJourney(Journey $journey): void
     {
-        $this->journeys[$journey->getJourneyId()->getId()] = $journey;
+        $this->journeys[$journey->getJourneyId()->value()] = $journey;
     }
 
     private function removeJourney(Journey $journey): void
     {
-        unset($this->journeys[$journey->getJourneyId()->getId()]);
+        unset($this->journeys[$journey->getJourneyId()->value()]);
     }
 
     public function setJourneys(array $journeys): void
