@@ -111,7 +111,8 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
         return $journeys;
     }
 
-    public function flush() {
+    public function flush()
+    {
         $this->_em->flush();
     }
 }

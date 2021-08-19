@@ -32,7 +32,6 @@ class DropOffDoneEventSubscriber implements DomainEventSubscriber, EventSubscrib
                 $request
             );
         }
-
     }
 
     public static function getSubscribedEvents()

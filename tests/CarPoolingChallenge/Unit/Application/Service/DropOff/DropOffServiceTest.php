@@ -117,7 +117,6 @@ class DropOffServiceTest extends TestCase
      */
     public function ItShouldDoDropOffWithJourneyWithoutCarAssigned(): void
     {
-
         $request = [
             'journey_id' => 2
         ];

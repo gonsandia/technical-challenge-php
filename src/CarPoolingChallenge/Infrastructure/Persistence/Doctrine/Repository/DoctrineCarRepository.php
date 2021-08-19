@@ -147,7 +147,8 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         $car->setJourneys($journeys);
     }
 
-    public function flush() {
+    public function flush()
+    {
         $this->_em->flush();
     }
 }

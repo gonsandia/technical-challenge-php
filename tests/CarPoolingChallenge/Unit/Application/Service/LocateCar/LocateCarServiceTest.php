@@ -38,7 +38,6 @@ class LocateCarServiceTest extends TestCase
      */
     public function ItShouldReturnNull(): void
     {
-
         $request = [
             'journey_id' => 2
         ];
@@ -65,8 +64,8 @@ class LocateCarServiceTest extends TestCase
 
         $car = $service->execute($request);
 
-        $this->assertEquals( new CarId(1), $car->getCarId());
-        $this->assertEquals( new TotalSeats(5), $car->getTotalSeats());
+        $this->assertEquals(new CarId(1), $car->getCarId());
+        $this->assertEquals(new TotalSeats(5), $car->getTotalSeats());
     }
 
     private function setupCarRepository()

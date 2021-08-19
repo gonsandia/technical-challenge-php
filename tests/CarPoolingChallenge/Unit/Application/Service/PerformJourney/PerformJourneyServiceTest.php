@@ -38,7 +38,6 @@ class PerformJourneyServiceTest extends TestCase
      */
     public function ItShouldPerformTheJourney(): void
     {
-
         $request = [
             'id' => 1,
             'people' => 1
@@ -56,13 +55,12 @@ class PerformJourneyServiceTest extends TestCase
      */
     public function ItShouldQueueTheJourney(): void
     {
-
         $request = [
             'id' => 1,
             'people' => 5
         ];
 
-        $service = new PerformJourneyService($this->journeyRepository, $this->carRepository,$this->eventDispatcher);
+        $service = new PerformJourneyService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
 
         $journey = $service->execute($request);
 

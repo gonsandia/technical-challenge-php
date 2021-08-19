@@ -35,7 +35,6 @@ class InMemoryCarRepository implements CarRepository
     public function ofJourneyId(JourneyId $journeyId): ?Car
     {
         foreach ($this->cars as $car) {
-
             foreach ($car->getJourneys() as $journey) {
                 if ($journey->getJourneyId()->equals($journeyId)) {
                     return $car;
@@ -62,9 +61,8 @@ class InMemoryCarRepository implements CarRepository
             if ($car->getCarId()->equals($carId)) {
                 return $car;
             }
-
         }
 
-       throw new CarNotExistsException();
+        throw new CarNotExistsException();
     }
 }

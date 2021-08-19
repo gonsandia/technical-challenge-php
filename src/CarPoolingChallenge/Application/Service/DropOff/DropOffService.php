@@ -14,8 +14,7 @@ class DropOffService implements ApplicationService
         private JourneyRepository        $journeyRepository,
         private CarRepository            $carRepository,
         private EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
     }
 
     public function execute($request = null): bool
