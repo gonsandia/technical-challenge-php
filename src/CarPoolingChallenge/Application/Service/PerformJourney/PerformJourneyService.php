@@ -10,17 +10,15 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyPerformed;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyQueued;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class PerformJourneyService implements ApplicationService
 {
-    private JourneyRepository $journeyRepository;
-
-    private CarRepository $carRepository;
-
-    public function __construct(JourneyRepository $journeyRepository, CarRepository $carRepository)
-    {
-        $this->journeyRepository = $journeyRepository;
-        $this->carRepository = $carRepository;
+    public function __construct(
+        private JourneyRepository $journeyRepository,
+        private CarRepository $carRepository,
+        private EventDispatcher $eventDispatcher
+    ) {
     }
 
 
@@ -45,6 +43,12 @@ class PerformJourneyService implements ApplicationService
             DomainEventPublisher::instance()->publish(
                 JourneyQueued::from($journey)
             );
+        }
+
+        $events = $car->getEvents();
+
+        foreach ($events as $event) {
+            $this->eventDispatcher->dispatch($event);
         }
 
         return $journey;

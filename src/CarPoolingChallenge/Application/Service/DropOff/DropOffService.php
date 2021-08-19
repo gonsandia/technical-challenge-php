@@ -11,17 +11,16 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\DropOffDone;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DropOffService implements ApplicationService
 {
-    private JourneyRepository $journeyRepository;
-
-    private CarRepository $carRepository;
-
-    public function __construct(JourneyRepository $journeyRepository, CarRepository $carRepository)
+    public function __construct(
+        private JourneyRepository $journeyRepository,
+        private CarRepository $carRepository,
+        private EventDispatcher   $eventDispatcher
+    )
     {
-        $this->journeyRepository = $journeyRepository;
-        $this->carRepository = $carRepository;
     }
 
     public function execute($request = null): bool
@@ -41,6 +40,12 @@ class DropOffService implements ApplicationService
         DomainEventPublisher::instance()->publish(
             DropOffDone::from($journey)
         );
+
+        $events = $car->getEvents();
+
+        foreach ($events as $event) {
+            $this->eventDispatcher->dispatch($event);
+        }
 
         return true;
     }

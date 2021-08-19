@@ -6,18 +6,15 @@ use Gonsandia\CarPoolingChallenge\Application\Service\ApplicationService;
 use Gonsandia\CarPoolingChallenge\Domain\Event\DomainEventPublisher;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarsLoaded;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class LoadAvailableCarsService implements ApplicationService
 {
-    private CarRepository $carRepository;
-
-    /**
-     * LoadAvailableCarsService constructor.
-     * @param CarRepository $carRepository
-     */
-    public function __construct(CarRepository $carRepository)
+    public function __construct(
+        private CarRepository $carRepository,
+        private EventDispatcher   $eventDispatcher
+    )
     {
-        $this->carRepository = $carRepository;
     }
 
     public function execute($request = null)
@@ -26,9 +23,9 @@ class LoadAvailableCarsService implements ApplicationService
 
         $this->carRepository->loadCars($cars);
 
-        DomainEventPublisher::instance()->publish(
-            CarsLoaded::from($cars)
-        );
+        $event = CarsLoaded::from($cars);
+
+        $this->eventDispatcher->dispatch($event);
 
         return $cars;
     }

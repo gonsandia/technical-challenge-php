@@ -3,8 +3,9 @@
 namespace Gonsandia\CarPoolingChallenge\Domain\Event;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class LoggerDomainEventSubscriber implements DomainEventSubscriber
+class LoggerDomainEventSubscriber implements DomainEventSubscriber, EventSubscriberInterface
 {
     private LoggerInterface $logger;
 
@@ -27,8 +28,10 @@ class LoggerDomainEventSubscriber implements DomainEventSubscriber
         }
     }
 
-    public function isSubscribedTo(DomainEvent $aDomainEvent): bool
+    public static function getSubscribedEvents()
     {
-        return true;
+        return [
+            DomainEvent::class => 'handle',
+        ];
     }
 }
