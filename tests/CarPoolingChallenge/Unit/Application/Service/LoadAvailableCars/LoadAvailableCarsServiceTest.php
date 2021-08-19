@@ -4,122 +4,84 @@ namespace Gonsandia\Tests\CarPoolingChallenge\Unit\Application\Service\LoadAvail
 
 use Assert\InvalidArgumentException;
 use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvailableCarsService;
-use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
-use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
-use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
+use Gonsandia\Tests\CarPoolingChallenge\Mocks\Infrastructure\Persistence\InMemory\Repository\InMemoryCarRepository;
+use Gonsandia\Tests\CarPoolingChallenge\Mocks\Infrastructure\Persistence\InMemory\Repository\InMemoryJourneyRepository;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class LoadAvailableCarsServiceTest extends TestCase
 {
     private CarRepository $carRepository;
 
+    private JourneyRepository $journeyRepository;
+
+    private EventDispatcherInterface $eventDispatcher;
+
     protected function setUp(): void
     {
-        $mockCarRepository = $this->createMock(CarRepository::class);
-        $this->carRepository = $mockCarRepository;
+        $this->setupCarRepository();
+        $this->setupJourneyRepository();
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
         parent::setUp();
     }
 
-    public function testShouldCreateAvailableCarListFromRequest(): void
+    /**
+     * @test
+     */
+    public function ItShouldCreateAvailableCarListFromRequest(): void
     {
-        $request = new LoadAvailableCarsRequest(
-            [
-                Car::from(
-                    new CarId(1),
-                    new TotalSeats(4)
-                ),
-                Car::from(
-                    new CarId(2),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(3),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(4),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(5),
-                    new TotalSeats(6)
-                ),
+        $request = [
+            'cars' => [
+                ['id' => 1, 'seats' => 4],
+                ['id' => 2, 'seats' => 5],
+                ['id' => 3, 'seats' => 5],
+                ['id' => 4, 'seats' => 5],
+                ['id' => 5, 'seats' => 6],
             ]
-        );
+        ];
 
-        $service = new LoadAvailableCarsService($this->carRepository);
+        $service = new LoadAvailableCarsService($this->carRepository, $this->eventDispatcher);
+
 
         $cars = $service->execute($request);
 
         self::assertNotEmpty($cars);
     }
 
-    public function testShouldNotCreateAvailableCarListFromRequestInvalidNumberOfSeats(): void
+    /**
+     * @test
+     */
+    public function ItShouldNotCreateAvailableCarListFromRequestInvalidNumberOfSeats(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $request = new LoadAvailableCarsRequest(
-            [
-                Car::from(
-                    new CarId(1),
-                    new TotalSeats(0)
-                ),
-                Car::from(
-                    new CarId(2),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(3),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(4),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(5),
-                    new TotalSeats(126)
-                ),
+        $request = [
+            'cars' => [
+                ['id' => 1, 'seats' => 0],
+                ['id' => 2, 'seats' => 5],
+                ['id' => 3, 'seats' => 5],
+                ['id' => 4, 'seats' => 5],
+                ['id' => 5, 'seats' => 126],
             ]
-        );
+        ];
 
-        $service = new LoadAvailableCarsService($this->carRepository);
+        $service = new LoadAvailableCarsService($this->carRepository, $this->eventDispatcher);
 
         $service->execute($request);
     }
 
-    public function testShouldNotCreateAvailableCarListFromRequestInvalidIds(): void
+    private function setupCarRepository()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $carRepository = new InMemoryCarRepository();
+        $this->carRepository = $carRepository;
+    }
 
-        $request = new LoadAvailableCarsRequest(
-            [
-                Car::from(
-                    new CarId(0),
-                    new TotalSeats(4)
-                ),
-                Car::from(
-                    new CarId(2),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(3),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(4),
-                    new TotalSeats(5)
-                ),
-                Car::from(
-                    new CarId(-5),
-                    new TotalSeats(6)
-                ),
-            ]
-        );
-
-        $service = new LoadAvailableCarsService($this->carRepository);
-
-        $service->execute($request);
+    private function setupJourneyRepository()
+    {
+        $journeyRepository = new InMemoryJourneyRepository();
+        $this->journeyRepository = $journeyRepository;
     }
 }
