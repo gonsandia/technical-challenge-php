@@ -2,7 +2,7 @@
 
 namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
-class CarId
+class CarId implements \Stringable
 {
     private int $value;
 
@@ -19,5 +19,10 @@ class CarId
     public function equals($other): bool
     {
         return $this->value() === $other->value();
+    }
+
+    public function __toString(): string
+    {
+        return (string)$this->value();
     }
 }

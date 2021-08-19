@@ -20,7 +20,7 @@ final class DoctrineJourneyId extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return is_null($value) ? null : (int)$value->getId();
+        return is_null($value) ? null : (int)$value->value();
     }
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string

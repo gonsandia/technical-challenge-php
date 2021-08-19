@@ -34,13 +34,12 @@ class PerformJourneyService implements ApplicationService
         if (!is_null($car)) {
             $car->performJourney($journey);
             $this->carRepository->save($car);
+            $events = array_merge($events, $car->getEvents());
         } else {
             $events[] = JourneyQueued::from($journey);
         }
 
         $this->journeyRepository->save($journey);
-
-        $events = array_merge($events, $car->getEvents());
 
         foreach ($events as $event) {
             $this->eventDispatcher->dispatch($event);

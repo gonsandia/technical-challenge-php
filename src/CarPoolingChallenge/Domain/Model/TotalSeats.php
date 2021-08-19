@@ -4,7 +4,7 @@ namespace Gonsandia\CarPoolingChallenge\Domain\Model;
 
 use Assert\Assert;
 
-class TotalSeats
+class TotalSeats implements \Stringable
 {
     public const MIN_SEATS = 4;
     public const MAX_SEATS = 6;
@@ -25,5 +25,10 @@ class TotalSeats
     public function equals($other): bool
     {
         return $this->value() === $other->value();
+    }
+
+    public function __toString(): string
+    {
+        return (string)$this->value();
     }
 }

@@ -4,7 +4,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity repository-class="Gonsandia\CarPoolingChallenge\Infrastructure\Domain\Model\DoctrineCarRepository"
+    <entity repository-class="Gonsandia\CarPoolingChallenge\Infrastructure\Persistence\Doctrine\Repository\DoctrineCarRepository"
             name="Gonsandia\CarPoolingChallenge\Domain\Model\Car"
             table="car">
 

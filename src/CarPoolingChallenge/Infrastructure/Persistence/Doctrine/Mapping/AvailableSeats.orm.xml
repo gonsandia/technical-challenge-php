@@ -5,7 +5,7 @@
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <embeddable name="Gonsandia\CarPoolingChallenge\Domain\Model\AvailableSeats">
-        <field name="count" type="integer" column="available_seats" />
+        <field name="value" type="integer" column="available_seats" />
     </embeddable>
 
 </doctrine-mapping>

@@ -5,7 +5,7 @@
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <embeddable name="Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople">
-        <field name="count" type="integer" column="people" />
+        <field name="value" type="integer" column="people" />
     </embeddable>
 
 </doctrine-mapping>

@@ -43,7 +43,7 @@ class Car implements AggregateRoot
     }
 
     /**
-     * @return array
+     * @return Journey[]
      */
     public function getJourneys(): array
     {
@@ -90,7 +90,7 @@ class Car implements AggregateRoot
         $usedSeats = 0;
 
         foreach ($journeys as $journey) {
-            $usedSeats += $journey->getTotalPeople()->getCount();
+            $usedSeats += $journey->getTotalPeople()->value();
         }
         return new AvailableSeats($totalSeats->value() - $usedSeats);
     }

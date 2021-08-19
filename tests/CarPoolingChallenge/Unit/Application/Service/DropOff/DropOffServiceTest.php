@@ -2,20 +2,18 @@
 
 namespace Gonsandia\Tests\CarPoolingChallenge\Unit\Application\Service\DropOff;
 
-use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffService;
-use Gonsandia\CarPoolingChallenge\Domain\Event\DomainEventPublisher;
-use Gonsandia\CarPoolingChallenge\Domain\Event\SpySubscriber;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\CarNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\Exception\JourneyNotExistsException;
+use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
-use Gonsandia\CarPoolingChallenge\Domain\Model\DropOffDone;
-use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
-use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
-use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
+use Gonsandia\Tests\CarPoolingChallenge\Mocks\Infrastructure\Persistence\InMemory\Repository\InMemoryCarRepository;
+use Gonsandia\Tests\CarPoolingChallenge\Mocks\Infrastructure\Persistence\InMemory\Repository\InMemoryJourneyRepository;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class DropOffServiceTest extends TestCase
 {
@@ -23,145 +21,113 @@ class DropOffServiceTest extends TestCase
 
     private JourneyRepository $journeyRepository;
 
+    private EventDispatcherInterface $eventDispatcher;
+
     protected function setUp(): void
     {
-        // $carRepository = new InMemoryCarRepository();
-        $mockCarRepository = $this->createMock(CarRepository::class);
-        $mockJourneyRepository = $this->createMock(JourneyRepository::class);
-        $this->carRepository = $mockCarRepository;
-        $this->journeyRepository = $mockJourneyRepository;
+
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         parent::setUp();
     }
 
-    public function testShouldPublishDropOffDoneEvent(): void
+    /**
+     * @test
+     */
+    public function ItShouldDoTheDropOffFromRequest(): void
     {
-        $subscriber = new SpySubscriber();
+        $request = [
+            'journey_id' => 1
+        ];
 
-        $id = DomainEventPublisher::instance()->subscribe($subscriber);
-
-        $request = new DropOffRequest(
-            new JourneyId(1)
-        );
-
-        $service = new DropOffService($this->journeyRepository, $this->carRepository);
-
-        $service->execute($request);
-
-        DomainEventPublisher::instance()->unsubscribe($id);
-
-        self::assertInstanceOf(DropOffDone::class, $subscriber->domainEvent);
-    }
-
-    public function testShouldDoTheDropOffFromRequest(): void
-    {
-        $request = new DropOffRequest(
-            new JourneyId(1)
-        );
-
-        $service = new DropOffService($this->journeyRepository, $this->carRepository);
-
-        $service->execute($request);
+        $service = new DropOffService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
 
         $result = $service->execute($request);
 
         self::assertTrue($result);
     }
 
-    public function testShouldThrowJourneyNotFoundExceptionTheDropOffFromRequest(): void
+    /**
+     * @test
+     */
+    public function ItShouldThrowJourneyNotFoundExceptionTheDropOffFromRequest(): void
     {
-        $request = new DropOffRequest(
-            new JourneyId(1)
-        );
+        $request = [
+            'journey_id' => 1
+        ];
 
-        $stubJourneyRepository = $this->journeyRepository;
-
-        $stubJourneyRepository
-            ->method('ofId')
-            ->willThrowException(new JourneyNotExistsException());
-
-        $service = new DropOffService($stubJourneyRepository, $this->carRepository);
+        $service = new DropOffService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
 
         $this->expectException(JourneyNotExistsException::class);
 
         $service->execute($request);
     }
 
-    public function testShouldThrowCarNotExistsExceptionTheDropOffFromRequest(): void
+    /**
+     * @test
+     */
+    public function ItShouldThrowCarNotExistsExceptionTheDropOffFromRequest(): void
     {
-        $request = new DropOffRequest(
-            new JourneyId(1)
-        );
+        $request = [
+            'journey_id' => 1
+        ];
 
-        $stubJourneyRepository = $this->journeyRepository;
-        $stubJourneyRepository
-            ->method('ofId')
-            ->willReturn(
-                Journey::from(
-                    new JourneyId(1),
-                    new TotalPeople(4),
-                    new CarId(1)
-                )
-            );
-
-        $stubCarRepository = $this->carRepository;
-        $stubCarRepository
-            ->method('ofId')
-            ->willThrowException(new CarNotExistsException());
-
-        $service = new DropOffService($stubJourneyRepository, $stubCarRepository);
+        $service = new DropOffService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
 
         $this->expectException(CarNotExistsException::class);
 
         $service->execute($request);
     }
 
-    public function testShouldDoDropOffWithJourneyWithoutCarAssigned(): void
+    /**
+     * @test
+     */
+    public function ItShouldDoDropOffWithJourneyWithoutCarAssigned(): void
     {
-        $request = new DropOffRequest(
-            new JourneyId(1)
-        );
+        $request = [
+            'journey_id' => 1
+        ];
 
-        $stubJourneyRepository = $this->journeyRepository;
-
-        $stubJourneyRepository
-            ->method('ofId')
-            ->willReturn(
-                Journey::from(
-                    new JourneyId(1),
-                    new TotalPeople(4),
-                    null
-                )
-            );
-
-        $service = new DropOffService($stubJourneyRepository, $this->carRepository);
+        $service = new DropOffService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
 
         $result = $service->execute($request);
 
         self::assertTrue($result);
     }
 
-    public function testShouldDoDropOffWithJourneyWithCarAssigned(): void
+    /**
+     * @test
+     */
+    public function ItShouldDoDropOffWithJourneyWithCarAssigned(): void
     {
-        $request = new DropOffRequest(
-            new JourneyId(1)
-        );
+        $request = [
+            'journey_id' => 1
+        ];
 
-        $stubJourneyRepository = $this->journeyRepository;
-
-        $stubJourneyRepository
-            ->method('ofId')
-            ->willReturn(
-                Journey::from(
-                    new JourneyId(1),
-                    new TotalPeople(4),
-                    new CarId(1)
-                )
-            );
-
-        $service = new DropOffService($stubJourneyRepository, $this->carRepository);
+        $service = new DropOffService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
 
         $result = $service->execute($request);
 
         self::assertTrue($result);
+    }
+
+    private function setupCarRepository()
+    {
+        $carRepository = new InMemoryCarRepository();
+        $this->carRepository = $carRepository;
+
+        $cars = [
+            Car::from(
+                new CarId(1),
+                new TotalSeats(6)
+            )
+        ];
+
+        $this->carRepository->loadCars($cars);
+    }
+
+    private function setupJourneyRepository()
+    {
+        $journeyRepository = new InMemoryJourneyRepository();
+        $this->journeyRepository = $journeyRepository;
     }
 }

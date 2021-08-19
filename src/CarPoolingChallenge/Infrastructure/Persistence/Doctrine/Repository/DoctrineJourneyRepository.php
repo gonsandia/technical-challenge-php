@@ -33,7 +33,7 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
 
         $qb
             ->update(Journey::class, 'j')
-            ->set('j.totalPeople.count', ':totalPeople')
+            ->set('j.totalPeople.value', ':totalPeople')
             ->set('j.carId', ':carId')
             ->andWhere($qb->expr()->eq('j.journeyId', ':journeyId'))
             ->setParameter('totalPeople', $journey->getTotalPeople()->value())

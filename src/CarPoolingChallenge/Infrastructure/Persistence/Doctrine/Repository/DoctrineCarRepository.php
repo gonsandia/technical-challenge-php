@@ -49,8 +49,6 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         }
 
         $this->_em->persist($car);
-
-        $this->_em->flush();
     }
 
     private function update(Car $car)
@@ -59,8 +57,8 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
 
         $qb
             ->update(Car::class, 'c')
-            ->set('c.availableSeats.count', ':availableSeats')
-            ->set('c.totalSeats.count', ':totalSeats')
+            ->set('c.availableSeats.value', ':availableSeats')
+            ->set('c.totalSeats.value', ':totalSeats')
             ->andWhere($qb->expr()->eq('c.carId ', ':carId'))
             ->setParameter('availableSeats', $car->getAvailableSeats()->value())
             ->setParameter('totalSeats', $car->getTotalSeats()->value())
@@ -88,7 +86,7 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
         $qb->select();
 
         $qb
-            ->andWhere($qb->expr()->gte('c.availableSeats.count', ':availableSeats'));
+            ->andWhere($qb->expr()->gte('c.availableSeats.value', ':availableSeats'));
 
         $qb
             ->setParameter('availableSeats', $totalPeople->value());

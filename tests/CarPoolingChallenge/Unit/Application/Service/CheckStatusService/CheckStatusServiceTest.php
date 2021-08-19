@@ -7,7 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 class CheckStatusServiceTest extends TestCase
 {
-    public function testItShouldPass(): void
+    /**
+     * @test
+     */
+    public function ItShouldPass(): void
     {
         $service = new CheckStatusService();
         $result = $service->execute();
