@@ -2,6 +2,7 @@
 
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\UI\Web;
 
+use Assert\Assert;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarService;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
@@ -29,9 +30,9 @@ class LocateCarController extends AbstractController
     {
         $this->assertContentType($request, self::FORM_CONTENT_TYPE);
 
-        $action = $this->serializeRequest($request);
+        $payload = $this->serializeRequest($request);
 
-        $car = $this->locateCarService->execute($action);
+        $car = $this->locateCarService->execute($payload);
 
         if (is_null($car)) {
             return new Response(null, Response::HTTP_NO_CONTENT);
@@ -47,10 +48,14 @@ class LocateCarController extends AbstractController
         }
     }
 
-    private function serializeRequest(Request $request): LocateCarRequest
+    private function serializeRequest(Request $request): array
     {
-        return new LocateCarRequest(
-            new JourneyId((int)$request->request->get('ID'))
-        );
+        $payload = [];
+
+        $payload['journey_id'] = (int) $request->request->get('ID');
+
+        Assert::that($payload['journey_id'])->integer()->greaterThan(0);
+
+        return $payload;
     }
 }

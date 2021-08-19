@@ -22,16 +22,11 @@ class LocateCarService implements ApplicationService
 
     public function execute($request = null): ?Car
     {
-        $journeyId = $request->getJourneyId();
+        $journeyId = new JourneyId($request['journey_id']);
+
         $journey = $this->journeyRepository->ofId($journeyId);
 
-        return $this->locateCarOfJourneyId($journey->getJourneyId());
-    }
-
-
-    private function locateCarOfJourneyId(JourneyId $journeyId): ?Car
-    {
-        $car = $this->carRepository->ofJourneyId($journeyId);
+        $car = $this->carRepository->ofJourneyId($journey->getJourneyId());
 
         if (!is_null($car)) {
             DomainEventPublisher::instance()->publish(

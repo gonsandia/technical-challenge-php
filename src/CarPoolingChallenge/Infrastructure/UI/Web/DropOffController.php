@@ -2,6 +2,7 @@
 
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\UI\Web;
 
+use Assert\Assert;
 use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffService;
 use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalApplicationService;
@@ -29,14 +30,14 @@ class DropOffController extends AbstractController
     {
         $this->assertContentType($request, self::FORM_CONTENT_TYPE);
 
-        $action = $this->serializeRequest($request);
+        $payload = $this->serializeRequest($request);
 
         $transactionalService = new TransactionalApplicationService(
             $this->dropOffService,
             $this->session
         );
 
-        $transactionalService->execute($action);
+        $transactionalService->execute($payload);
 
         return new Response(null, Response::HTTP_OK);
     }
@@ -48,10 +49,14 @@ class DropOffController extends AbstractController
         }
     }
 
-    private function serializeRequest(Request $request): DropOffRequest
+    private function serializeRequest(Request $request): array
     {
-        return new DropOffRequest(
-            new JourneyId((int)$request->request->get('ID'))
-        );
+        $payload = [];
+
+        $payload['journey_id'] = (int) $request->request->get('ID');
+
+        Assert::that($payload['journey_id'])->integer()->greaterThan(0);
+
+        return $payload;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\UI\Web;
 
+use Assert\Assert;
 use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvailableCarsRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LoadAvailableCars\LoadAvailableCarsService;
 use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalApplicationService;
@@ -32,14 +33,14 @@ class LoadAvailableCarsController extends AbstractController
     {
         $this->assertContentType($request, self::FORM_CONTENT_TYPE);
 
-        $action = $this->serializeRequest($request);
+        $payload = $this->serializeRequest($request);
 
         $transactionalService = new TransactionalApplicationService(
             $this->loadAvailableCars,
             $this->session
         );
 
-        $transactionalService->execute($action);
+        $transactionalService->execute($payload);
 
         return new Response(null, Response::HTTP_OK);
     }
@@ -51,28 +52,15 @@ class LoadAvailableCarsController extends AbstractController
         }
     }
 
-    private function serializeRequest(Request $request): LoadAvailableCarsRequest
+    private function serializeRequest(Request $request): array
     {
-        $body = $this->serializeBody($request);
+        $payload = [];
 
-        $cars = $this->loadCarsFromArray($body);
+        $payload['cars'] = $this->serializeBody($request);
 
-        return new LoadAvailableCarsRequest(
-            $cars
-        );
-    }
+        Assert::that($payload['cars'])->isArray()->notEmpty();
 
-    private function loadCarsFromArray(array $cars): array
-    {
-        $loadedCars = [];
-        foreach ($cars as $car) {
-            $loadedCars[$car['id']] = Car::from(
-                new CarId($car['id']),
-                new TotalSeats($car['seats'])
-            );
-        }
-
-        return $loadedCars;
+        return $payload;
     }
 
     private function serializeBody(Request $request): mixed

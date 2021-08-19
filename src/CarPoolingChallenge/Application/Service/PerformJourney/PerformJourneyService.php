@@ -7,9 +7,11 @@ use Gonsandia\CarPoolingChallenge\Domain\Event\DomainEventPublisher;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyPerformed;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyQueued;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class PerformJourneyService implements ApplicationService
@@ -24,9 +26,12 @@ class PerformJourneyService implements ApplicationService
 
     public function execute($request = null)
     {
-        $journey = Journey::from($request->getId(), $request->getPeople(), null);
+        $journey = Journey::from(
+            new JourneyId($request['id']),
+            new TotalPeople($request['people'])
+        );
 
-        $car = $this->findCarForJourney($journey);
+        $car = $this->carRepository->findCarForPeople($journey->getTotalPeople());
 
         if (!is_null($car)) {
             $car->performJourney($journey);
@@ -52,12 +57,5 @@ class PerformJourneyService implements ApplicationService
         }
 
         return $journey;
-    }
-
-    private function findCarForJourney(Journey $journey): ?Car
-    {
-        $car = $this->carRepository->findCarForPeople($journey->getTotalPeople());
-
-        return $car;
     }
 }

@@ -19,9 +19,9 @@ class FillCarWithQueueJourneysService implements ApplicationService
     private JourneyRepository $journeyRepository;
 
     public function __construct(
-        CarRepository $carRepository,
-        JourneyRepository $journeyRepository,
-        private EventDispatcher   $eventDispatcher
+        CarRepository           $carRepository,
+        JourneyRepository       $journeyRepository,
+        private EventDispatcher $eventDispatcher
     )
     {
         $this->carRepository = $carRepository;
@@ -31,7 +31,9 @@ class FillCarWithQueueJourneysService implements ApplicationService
 
     public function execute($request = null)
     {
-        $car = $this->findCarOfId($request->getCarId());
+        $carId = new CarId($request['car_id']);
+
+        $car = $this->findCarOfId($carId);
 
         $journey = $this->findQueueJourneyOfCar($car);
 

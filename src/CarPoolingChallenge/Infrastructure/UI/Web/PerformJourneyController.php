@@ -2,6 +2,7 @@
 
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\UI\Web;
 
+use Assert\Assert;
 use Gonsandia\CarPoolingChallenge\Application\Service\PerformJourney\PerformJourneyRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\PerformJourney\PerformJourneyService;
 use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalApplicationService;
@@ -31,14 +32,14 @@ class PerformJourneyController extends AbstractController
     {
         $this->assertContentType($request, self::JSON_CONTENT_TYPE);
 
-        $action = $this->serializeRequest($request);
+        $payload = $this->serializeRequest($request);
 
         $transactionalService = new TransactionalApplicationService(
             $this->journeyService,
             $this->session
         );
 
-        $journey = $transactionalService->execute($action);
+        $journey = $transactionalService->execute($payload);
 
         if (is_null($journey->getCarId())) {
             return new Response(null, Response::HTTP_ACCEPTED);
@@ -54,14 +55,21 @@ class PerformJourneyController extends AbstractController
         }
     }
 
-    private function serializeRequest(Request $request): PerformJourneyRequest
+    private function serializeRequest(Request $request): array
     {
+        $payload = [];
+
         $body = $this->serializeBody($request);
 
-        return new PerformJourneyRequest(
-            new JourneyId((int)$body['id']),
-            new TotalPeople((int)$body['people'])
-        );
+        $payload['id'] = $body['id'];
+
+        Assert::that($payload['id'])->integer()->greaterThan(0);
+
+        $payload['people'] = $body['people'];
+
+        Assert::that($payload['people'])->integer()->greaterThan(0);
+
+        return $payload;
     }
 
     private function serializeBody(Request $request): mixed
