@@ -1,6 +1,6 @@
 <?php
 
-namespace Gonsandia\CarPoolingChallenge\Infrastructure\Domain\Model;
+namespace Gonsandia\CarPoolingChallenge\Infrastructure\Persistence\Doctrine\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -25,7 +25,6 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
         }
 
         $this->_em->persist($journey);
-
     }
 
     private function update(Journey $journey)
@@ -37,7 +36,7 @@ class DoctrineJourneyRepository extends ServiceEntityRepository implements Journ
             ->set('j.totalPeople.count', ':totalPeople')
             ->set('j.carId', ':carId')
             ->andWhere($qb->expr()->eq('j.journeyId', ':journeyId'))
-            ->setParameter('totalPeople', $journey->getTotalPeople()->getCount())
+            ->setParameter('totalPeople', $journey->getTotalPeople()->value())
             ->setParameter('carId', $journey->getCarId())
             ->setParameter('journeyId', $journey->getJourneyId());
 

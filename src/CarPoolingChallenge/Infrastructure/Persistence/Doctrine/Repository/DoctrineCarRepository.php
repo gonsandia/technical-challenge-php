@@ -1,6 +1,6 @@
 <?php
 
-namespace Gonsandia\CarPoolingChallenge\Infrastructure\Domain\Model;
+namespace Gonsandia\CarPoolingChallenge\Infrastructure\Persistence\Doctrine\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -62,8 +62,8 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
             ->set('c.availableSeats.count', ':availableSeats')
             ->set('c.totalSeats.count', ':totalSeats')
             ->andWhere($qb->expr()->eq('c.carId ', ':carId'))
-            ->setParameter('availableSeats', $car->getAvailableSeats()->getCount())
-            ->setParameter('totalSeats', $car->getTotalSeats()->getCount())
+            ->setParameter('availableSeats', $car->getAvailableSeats()->value())
+            ->setParameter('totalSeats', $car->getTotalSeats()->value())
             ->setParameter('carId', $car->getCarId());
 
         $result = $qb->getQuery()->execute();
@@ -91,7 +91,7 @@ class DoctrineCarRepository extends ServiceEntityRepository implements CarReposi
             ->andWhere($qb->expr()->gte('c.availableSeats.count', ':availableSeats'));
 
         $qb
-            ->setParameter('availableSeats', $totalPeople->getCount());
+            ->setParameter('availableSeats', $totalPeople->value());
 
         $qb
             ->setMaxResults(1);
