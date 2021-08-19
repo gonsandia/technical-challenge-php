@@ -2,7 +2,6 @@
 
 namespace Gonsandia\CarPoolingChallenge\Domain\Event;
 
-use Gonsandia\CarPoolingChallenge\Application\Service\FillCarWithQueueJourneys\FillCarWithQueueJourneysRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\FillCarWithQueueJourneys\FillCarWithQueueJourneysService;
 use Gonsandia\CarPoolingChallenge\Domain\Model\DropOffDone;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,13 +22,17 @@ class DropOffDoneEventSubscriber implements DomainEventSubscriber, EventSubscrib
 
     public function handle(DomainEvent $aDomainEvent): void
     {
-        $request = new FillCarWithQueueJourneysRequest(
-            $aDomainEvent->carId()
-        );
+        /** @var DropOffDone $aDomainEvent */
+        if (!is_null($aDomainEvent->getCarId())) {
+            $request = [
+                'car_id' => $aDomainEvent->getCarId()->value()
+            ];
 
-        $this->fillCarWithQueueJourneysService->execute(
-            $request
-        );
+            $this->fillCarWithQueueJourneysService->execute(
+                $request
+            );
+        }
+
     }
 
     public static function getSubscribedEvents()

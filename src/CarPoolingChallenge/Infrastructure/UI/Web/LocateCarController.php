@@ -3,9 +3,7 @@
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\UI\Web;
 
 use Assert\Assert;
-use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarService;
-use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +36,7 @@ class LocateCarController extends AbstractController
             return new Response(null, Response::HTTP_NO_CONTENT);
         }
 
-        return $this->json(['id' => $car->getCarId()->getId(), 'seats' => $car->getTotalSeats()->getCount()], Response::HTTP_OK, ['content-type' => 'application/json']);
+        return $this->json(['id' => $car->getCarId()->value(), 'seats' => $car->getTotalSeats()->value()], Response::HTTP_OK, ['content-type' => 'application/json']);
     }
 
     private function assertContentType(Request $request, string $contentType): void

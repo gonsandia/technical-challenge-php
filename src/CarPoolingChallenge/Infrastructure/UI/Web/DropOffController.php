@@ -3,11 +3,9 @@
 namespace Gonsandia\CarPoolingChallenge\Infrastructure\UI\Web;
 
 use Assert\Assert;
-use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\DropOff\DropOffService;
 use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalApplicationService;
 use Gonsandia\CarPoolingChallenge\Application\Service\TransactionalSession;
-use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Infrastructure\Exception\InvalidContentTypeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

@@ -11,10 +11,11 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 class DropOffService implements ApplicationService
 {
     public function __construct(
-        private JourneyRepository $journeyRepository,
-        private CarRepository $carRepository,
-        private EventDispatcherInterface   $eventDispatcher
-    ) {
+        private JourneyRepository        $journeyRepository,
+        private CarRepository            $carRepository,
+        private EventDispatcherInterface $eventDispatcher
+    )
+    {
     }
 
     public function execute($request = null): bool
@@ -27,15 +28,16 @@ class DropOffService implements ApplicationService
             $car = $this->carRepository->ofId($journey->getCarId());
             $car->dropOff($journey);
             $this->carRepository->save($car);
+
+            $events = $car->getEvents();
+
+            foreach ($events as $event) {
+                $this->eventDispatcher->dispatch($event);
+            }
         }
 
         $this->journeyRepository->remove($journey);
 
-        $events = $car->getEvents();
-
-        foreach ($events as $event) {
-            $this->eventDispatcher->dispatch($event);
-        }
 
         return true;
     }

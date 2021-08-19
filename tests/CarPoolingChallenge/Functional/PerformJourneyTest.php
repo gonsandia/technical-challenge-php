@@ -59,7 +59,7 @@ class PerformJourneyTest extends WebTestCase
 
         $code = $client->getResponse()->getStatusCode();
 
-        self::assertEquals(Response::HTTP_OK, (int) $code);
+        self::assertEquals(Response::HTTP_ACCEPTED, (int) $code);
     }
 
     /**

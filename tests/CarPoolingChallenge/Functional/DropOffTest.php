@@ -164,6 +164,10 @@ class DropOffTest extends WebTestCase
 
         $carRepository->save($car1);
         $journeyRepository->save($journey1);
+
+        // flush
+        $carRepository->flush();
+        $journeyRepository->flush();
     }
 
     /**
@@ -189,6 +193,10 @@ class DropOffTest extends WebTestCase
         // persist
         $carRepository->save($car1);
         $journeyRepository->save($journey1);
+
+        // flush
+        $carRepository->flush();
+        $journeyRepository->flush();
     }
 
     /**
@@ -205,6 +213,10 @@ class DropOffTest extends WebTestCase
         // clear tables
         $carRepository->clearTable();
         $journeyRepository->clearTable();
+
+        // flush
+        $carRepository->flush();
+        $journeyRepository->flush();
     }
 
     protected function tearDown(): void

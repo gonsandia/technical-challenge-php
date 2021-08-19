@@ -28,7 +28,7 @@ class CarTest extends TestCase
         $car->performJourney($journey);
 
         self::assertEquals(new AvailableSeats(0), $car->getAvailableSeats());
-        self::assertArrayHasKey($journey->getJourneyId()->getId(), $car->getJourneys());
+        self::assertArrayHasKey($journey->getJourneyId()->value(), $car->getJourneys());
         self::assertEquals($car->getCarId(), $journey->getCarId());
     }
 
@@ -53,7 +53,7 @@ class CarTest extends TestCase
 
         self::assertEquals(new AvailableSeats(6), $car->getAvailableSeats());
         var_dump($car->getJourneys());
-        self::assertArrayNotHasKey($journey->getJourneyId()->getId(), $car->getJourneys());
+        self::assertArrayNotHasKey($journey->getJourneyId()->value(), $car->getJourneys());
         self::assertNull($journey->getCarId());
     }
 

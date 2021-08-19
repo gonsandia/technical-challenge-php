@@ -163,6 +163,10 @@ class LocateCarTest extends WebTestCase
 
         $carRepository->save($car1);
         $journeyRepository->save($journey1);
+
+        // flush
+        $carRepository->flush();
+        $journeyRepository->flush();
     }
 
     /**
@@ -190,6 +194,10 @@ class LocateCarTest extends WebTestCase
 
         $carRepository->save($car1);
         $journeyRepository->save($journey1);
+
+        // flush
+        $carRepository->flush();
+        $journeyRepository->flush();
     }
 
     /**
@@ -206,6 +214,10 @@ class LocateCarTest extends WebTestCase
         // clear tables
         $carRepository->clearTable();
         $journeyRepository->clearTable();
+
+        // flush
+        $carRepository->flush();
+        $journeyRepository->flush();
     }
 
     protected function tearDown(): void

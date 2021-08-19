@@ -8,7 +8,10 @@ use Gonsandia\CarPoolingChallenge\Domain\Exception\JourneyNotExistsException;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
+use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
+use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
+use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
 use Gonsandia\Tests\CarPoolingChallenge\Mocks\Infrastructure\Persistence\InMemory\Repository\InMemoryCarRepository;
 use Gonsandia\Tests\CarPoolingChallenge\Mocks\Infrastructure\Persistence\InMemory\Repository\InMemoryJourneyRepository;
@@ -25,8 +28,10 @@ class DropOffServiceTest extends TestCase
 
     protected function setUp(): void
     {
-
+        $this->setupCarRepository();
+        $this->setupJourneyRepository();
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
         parent::setUp();
     }
 
@@ -35,6 +40,27 @@ class DropOffServiceTest extends TestCase
      */
     public function ItShouldDoTheDropOffFromRequest(): void
     {
+        $journey1 = Journey::from(
+            new JourneyId(1),
+            new TotalPeople(2),
+            new CarId(1)
+        );
+
+        $car = Car::from(
+            new CarId(1),
+            new TotalSeats(5)
+        );
+
+        $car
+            ->performJourney($journey1);
+
+        $cars = [
+            $car
+        ];
+
+        $this->carRepository->loadCars($cars);
+        $this->journeyRepository->save($journey1);
+
         $request = [
             'journey_id' => 1
         ];
@@ -52,7 +78,7 @@ class DropOffServiceTest extends TestCase
     public function ItShouldThrowJourneyNotFoundExceptionTheDropOffFromRequest(): void
     {
         $request = [
-            'journey_id' => 1
+            'journey_id' => 3
         ];
 
         $service = new DropOffService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
@@ -67,8 +93,16 @@ class DropOffServiceTest extends TestCase
      */
     public function ItShouldThrowCarNotExistsExceptionTheDropOffFromRequest(): void
     {
+        $journey2 = Journey::from(
+            new JourneyId(4),
+            new TotalPeople(4),
+            new CarId(2)
+        );
+
+        $this->journeyRepository->save($journey2);
+
         $request = [
-            'journey_id' => 1
+            'journey_id' => 4
         ];
 
         $service = new DropOffService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
@@ -83,8 +117,9 @@ class DropOffServiceTest extends TestCase
      */
     public function ItShouldDoDropOffWithJourneyWithoutCarAssigned(): void
     {
+
         $request = [
-            'journey_id' => 1
+            'journey_id' => 2
         ];
 
         $service = new DropOffService($this->journeyRepository, $this->carRepository, $this->eventDispatcher);
@@ -115,11 +150,22 @@ class DropOffServiceTest extends TestCase
         $carRepository = new InMemoryCarRepository();
         $this->carRepository = $carRepository;
 
+        $journey1 = Journey::from(
+            new JourneyId(1),
+            new TotalPeople(3),
+            new CarId(1)
+        );
+
+        $car = Car::from(
+            new CarId(1),
+            new TotalSeats(5)
+        );
+
+        $car
+            ->performJourney($journey1);
+
         $cars = [
-            Car::from(
-                new CarId(1),
-                new TotalSeats(6)
-            )
+            $car
         ];
 
         $this->carRepository->loadCars($cars);
@@ -129,5 +175,19 @@ class DropOffServiceTest extends TestCase
     {
         $journeyRepository = new InMemoryJourneyRepository();
         $this->journeyRepository = $journeyRepository;
+
+        $journey1 = Journey::from(
+            new JourneyId(1),
+            new TotalPeople(3),
+            new CarId(1)
+        );
+
+        $journey2 = Journey::from(
+            new JourneyId(2),
+            new TotalPeople(3)
+        );
+
+        $this->journeyRepository->save($journey1);
+        $this->journeyRepository->save($journey2);
     }
 }
