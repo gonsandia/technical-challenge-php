@@ -2,12 +2,8 @@
 
 namespace Gonsandia\Tests\CarPoolingChallenge\Unit\Application\Service\LocateCar;
 
-use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarRequest;
 use Gonsandia\CarPoolingChallenge\Application\Service\LocateCar\LocateCarService;
-use Gonsandia\CarPoolingChallenge\Domain\Event\DomainEventPublisher;
-use Gonsandia\CarPoolingChallenge\Domain\Event\SpySubscriber;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
-use Gonsandia\CarPoolingChallenge\Domain\Model\CarFound;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
@@ -15,7 +11,10 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalPeople;
 use Gonsandia\CarPoolingChallenge\Domain\Model\TotalSeats;
+use Gonsandia\Tests\CarPoolingChallenge\Mocks\Infrastructure\Persistence\InMemory\Repository\InMemoryCarRepository;
+use Gonsandia\Tests\CarPoolingChallenge\Mocks\Infrastructure\Persistence\InMemory\Repository\InMemoryJourneyRepository;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class LocateCarServiceTest extends TestCase
 {
@@ -23,55 +22,96 @@ class LocateCarServiceTest extends TestCase
 
     private JourneyRepository $journeyRepository;
 
+    private EventDispatcherInterface $eventDispatcher;
+
     protected function setUp(): void
     {
-        // $carRepository = new InMemoryCarRepository();
-        $mockCarRepository = $this->createMock(CarRepository::class);
-        $mockJourneyRepository = $this->createMock(JourneyRepository::class);
-        $this->carRepository = $mockCarRepository;
-        $this->journeyRepository = $mockJourneyRepository;
+        $this->setupCarRepository();
+        $this->setupJourneyRepository();
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
         parent::setUp();
     }
-    public function testShouldPublishCarFoundEvent(): void
+
+    /**
+     * @test
+     */
+    public function ItShouldReturnNull(): void
     {
-        $subscriber = new SpySubscriber();
 
-        $id = DomainEventPublisher::instance()->subscribe($subscriber);
+        $request = [
+            'journey_id' => 2
+        ];
 
-        $request = new LocateCarRequest(
-            new JourneyId(1)
-        );
-
-        $stubCarRepository = $this->carRepository;
-
-        $stubCarRepository
-            ->method('ofJourneyId')
-            ->willReturn(
-                $this->getCarOfJourney()
-            );
-
-
-        $service = new LocateCarService($stubCarRepository, $this->journeyRepository);
+        $service = new LocateCarService($this->carRepository, $this->journeyRepository, $this->eventDispatcher);
 
         $car = $service->execute($request);
 
-        DomainEventPublisher::instance()->unsubscribe($id);
+        $dummyCar = null;
 
-        self::assertInstanceOf(CarFound::class, $subscriber->domainEvent);
+        $this->assertEquals($dummyCar, $car);
     }
 
-    private function getCarOfJourney(): Car
+    /**
+     * @test
+     */
+    public function ItShouldFindTheCar(): void
     {
-        return Car::from(
-            new CarId(1),
-            new TotalSeats(4),
-            [
-                Journey::from(
-                    new JourneyId(1),
-                    new TotalPeople(4),
-                    new CarId(1)
-                )
-            ]
+        $request = [
+            'journey_id' => 1
+        ];
+
+        $service = new LocateCarService($this->carRepository, $this->journeyRepository, $this->eventDispatcher);
+
+        $car = $service->execute($request);
+
+        $this->assertEquals( new CarId(1), $car->getCarId());
+        $this->assertEquals( new TotalSeats(5), $car->getTotalSeats());
+    }
+
+    private function setupCarRepository()
+    {
+        $carRepository = new InMemoryCarRepository();
+        $this->carRepository = $carRepository;
+
+        $journey1 = Journey::from(
+            new JourneyId(1),
+            new TotalPeople(3),
+            new CarId(1)
         );
+
+        $car = Car::from(
+            new CarId(1),
+            new TotalSeats(5)
+        );
+
+        $car
+            ->performJourney($journey1);
+
+        $cars = [
+            $car
+        ];
+
+        $this->carRepository->loadCars($cars);
+    }
+
+    private function setupJourneyRepository()
+    {
+        $journeyRepository = new InMemoryJourneyRepository();
+        $this->journeyRepository = $journeyRepository;
+
+        $journey1 = Journey::from(
+            new JourneyId(1),
+            new TotalPeople(3),
+            new CarId(1)
+        );
+
+        $journey2 = Journey::from(
+            new JourneyId(2),
+            new TotalPeople(3)
+        );
+
+        $this->journeyRepository->save($journey1);
+        $this->journeyRepository->save($journey2);
     }
 }
