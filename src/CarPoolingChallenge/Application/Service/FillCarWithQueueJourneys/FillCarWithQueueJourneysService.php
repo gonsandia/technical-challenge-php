@@ -3,31 +3,21 @@
 namespace Gonsandia\CarPoolingChallenge\Application\Service\FillCarWithQueueJourneys;
 
 use Gonsandia\CarPoolingChallenge\Application\Service\ApplicationService;
-use Gonsandia\CarPoolingChallenge\Domain\Event\DomainEventPublisher;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Car;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\Journey;
-use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyPerformed;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class FillCarWithQueueJourneysService implements ApplicationService
 {
-    private CarRepository $carRepository;
-
-    private JourneyRepository $journeyRepository;
-
     public function __construct(
-        CarRepository           $carRepository,
-        JourneyRepository       $journeyRepository,
-        private EventDispatcher $eventDispatcher
-    )
-    {
-        $this->carRepository = $carRepository;
-        $this->journeyRepository = $journeyRepository;
+        private CarRepository            $carRepository,
+        private JourneyRepository        $journeyRepository,
+        private EventDispatcherInterface $eventDispatcher
+    ) {
     }
-
 
     public function execute($request = null)
     {
@@ -42,10 +32,6 @@ class FillCarWithQueueJourneysService implements ApplicationService
 
             $this->carRepository->save($car);
             $this->journeyRepository->save($journey);
-
-            DomainEventPublisher::instance()->publish(
-                JourneyPerformed::from($journey)
-            );
         }
 
         $events = $car->getEvents();

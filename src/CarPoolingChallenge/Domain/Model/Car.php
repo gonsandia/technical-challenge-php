@@ -65,6 +65,8 @@ class Car implements AggregateRoot
         $journey->assignCarId($this->carId);
         $this->addJourney($journey);
         $this->setAvailableSeats($this->totalSeats, $this->getJourneys());
+
+        $this->trigger(JourneyPerformed::from($journey));
     }
 
     public function dropOff(Journey $journey): void
@@ -74,6 +76,8 @@ class Car implements AggregateRoot
         $journey->assignCarId(null);
         $this->removeJourney($journey);
         $this->setAvailableSeats($this->totalSeats, $this->getJourneys());
+
+        $this->trigger(DropOffDone::from($journey));
     }
 
     private function setAvailableSeats(TotalSeats $totalSeats, array $journeys): void

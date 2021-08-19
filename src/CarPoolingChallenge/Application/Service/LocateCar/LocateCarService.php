@@ -9,14 +9,14 @@ use Gonsandia\CarPoolingChallenge\Domain\Model\CarFound;
 use Gonsandia\CarPoolingChallenge\Domain\Model\CarRepository;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyId;
 use Gonsandia\CarPoolingChallenge\Domain\Model\JourneyRepository;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class LocateCarService implements ApplicationService
 {
     public function __construct(
-        private CarRepository     $carRepository,
-        private JourneyRepository $journeyRepository,
-        private EventDispatcher   $eventDispatcher
+        private CarRepository            $carRepository,
+        private JourneyRepository        $journeyRepository,
+        private EventDispatcherInterface $eventDispatcher
     ) {
     }
 
@@ -29,14 +29,7 @@ class LocateCarService implements ApplicationService
         $car = $this->carRepository->ofJourneyId($journey->getJourneyId());
 
         if (!is_null($car)) {
-            DomainEventPublisher::instance()->publish(
-                CarFound::from($journeyId, $car)
-            );
-        }
-
-        $events = $car->getEvents();
-
-        foreach ($events as $event) {
+            $event = CarFound::from($journeyId, $car);
             $this->eventDispatcher->dispatch($event);
         }
 
