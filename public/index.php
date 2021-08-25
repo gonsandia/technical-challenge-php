@@ -19,10 +19,6 @@ if ($_SERVER['APP_DEBUG']) {
 
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 
-// create a log channel for domain events
-$logger = new Logger('events');
-$logger->pushHandler(new StreamHandler($kernel->getLogDir() . '/domain-events.log', Logger::INFO));
-
 $request = Request::createFromGlobals();
 
 $response = $kernel->handle($request);
