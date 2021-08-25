@@ -236,7 +236,7 @@ Your participation is really important. Thanks for your contribution!
   In this case, I used a simple sqlite database with a data mapper, in this case, Doctrine ORM.
 
 - Testing:
-  Following the pyramid testing approach, I tried to do as much coverage in the domain and application layer with unit tests for business rules.
+  I tried to do as much coverage in the domain and application layer with unit tests for business rules.
   The project has on the src folder 90% files and 71% lines.
   I missed the integration tests, but covered them with the functional ones
   
@@ -245,15 +245,6 @@ Your participation is really important. Thanks for your contribution!
   I used the symfony framework for routing, caching, dependency injection and error handling.
   I use a code style linter to ensure compliance with the psr-12 code style standard https://www.php-fig.org/psr/psr-12/
 
-- Observability:
-  I did this with logs, I followed the https://www.php-fig.org/psr/psr-3/ standard for logging.
-  Each domain event will be logged in the domain event log.
-  It will be tracked with a correlation_id for each error log and dispatched domain event.
-  In addition, for errors the details of the request will be tracked.
-
 - Version Control:
   Because this is a one-man project, I have used the trunk based development approach.
   
-- Efficiency:
-  Reduce log disk writing, minimize database access, and compile php classes. 
-  These reduce 50% the request time. Also set php and server params to improve performance
